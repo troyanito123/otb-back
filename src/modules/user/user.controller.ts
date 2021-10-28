@@ -19,35 +19,28 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RoleOptions, Roles } from '../auth/authorization/role.decorator';
 import { RolesGuard } from '../auth/authorization/role.guard';
 
-@Controller('user')
-@UseGuards(JwtAuthGuard)
+@Controller('users')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(RoleOptions.Admin)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @Roles(RoleOptions.Admin)
-  @UseGuards(RolesGuard)
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
   @Get()
-  @Roles(RoleOptions.Admin)
-  @UseGuards(RolesGuard)
   findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  @Roles(RoleOptions.Admin)
-  @UseGuards(RolesGuard)
   findOne(@Param() params: FindOneUserDto) {
     return this.userService.findOne(params.id);
   }
 
   @Put(':id')
-  @Roles(RoleOptions.Admin)
-  @UseGuards(RolesGuard)
   async update(
     @Param() params: FindOneUserDto,
     @Body() updateUserDto: UpdateUserDto,
@@ -69,8 +62,6 @@ export class UserController {
   }
 
   @Delete(':id')
-  @Roles(RoleOptions.Admin)
-  @UseGuards(RolesGuard)
   remove(@Param() params: FindOneUserDto) {
     return this.userService.remove(params.id);
   }
