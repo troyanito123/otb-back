@@ -1,4 +1,11 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateMonthlyPaymentDto } from './create-monthly-payment.dto';
+import { IsNotEmpty } from 'class-validator';
+export class UpdateMonthlyPaymentDto {
+  @IsNotEmpty()
+  amount: number;
 
-export class UpdateMonthlyPaymentDto extends PartialType(CreateMonthlyPaymentDto) {}
+  @IsNotEmpty()
+  month: string;
+
+  @IsNotEmpty()
+  year: string;
+}

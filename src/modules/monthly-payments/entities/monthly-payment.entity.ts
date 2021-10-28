@@ -12,9 +12,9 @@ export class MonthlyPayment extends CustomEntity {
   @Column()
   amount: number;
 
-  @BeforeInsert()
   @BeforeUpdate()
+  @BeforeInsert()
   toUppercase() {
-    this.month = this.month.toLocaleUpperCase();
+    this.month = this.month.trim().toUpperCase();
   }
 }

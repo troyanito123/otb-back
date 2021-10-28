@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateMonthlyPaymentDto } from './dto/create-monthly-payment.dto';
+import { FindAllMonthlyPaymentDto } from './dto/findAll-monthly-palyment.dto';
 import { UpdateMonthlyPaymentDto } from './dto/update-monthly-payment.dto';
 import { MonthlyPayment } from './entities/monthly-payment.entity';
 
@@ -13,22 +14,31 @@ export class MonthlyPaymentsService {
   ) {}
 
   create(createMonthlyPaymentDto: CreateMonthlyPaymentDto) {
-    return 'This action adds a new monthlyPayment';
+    return this.monthlyPaymentRepository.save(createMonthlyPaymentDto);
   }
 
-  findAll() {
-    return `This action returns all monthlyPayments`;
+  findAll(query: FindAllMonthlyPaymentDto) {
+    if (query.year)
+      return this.monthlyPaymentRepository.find({
+        where: { year: query.year },
+      });
+    return this.monthlyPaymentRepository.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} monthlyPayment`;
+    return this.monthlyPaymentRepository.findOne(id);
   }
 
-  update(id: number, updateMonthlyPaymentDto: UpdateMonthlyPaymentDto) {
-    return `This action updates a #${id} monthlyPayment`;
+  async update(id: number, updateMonthlyPaymentDto: UpdateMonthlyPaymentDto) {
+    const monthly_payment = await this.monthlyPaymentRepository.findOne(id);
+    const act = this.monthlyPaymentRepository.merge(
+      monthly_payment,
+      updateMonthlyPaymentDto,
+    );
+    return this.monthlyPaymentRepository.save(act);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} monthlyPayment`;
+    return this.monthlyPaymentRepository.delete(id);
   }
 }
