@@ -10,6 +10,7 @@ import { RoleModule } from './modules/role/role.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { MonthlyPaymentsModule } from './modules/monthly-payments/monthly-payments.module';
+import { MonthlyPaymentMadesModule } from './modules/monthly-payment-mades/monthly-payments-made.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { MonthlyPaymentsModule } from './modules/monthly-payments/monthly-paymen
     UserModule,
     AuthModule,
     MonthlyPaymentsModule,
+    MonthlyPaymentMadesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
