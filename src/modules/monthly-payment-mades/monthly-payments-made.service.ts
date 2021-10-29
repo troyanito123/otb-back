@@ -1,30 +1,112 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { createQueryBuilder, Repository } from 'typeorm';
+import { MonthlyPayment } from '../monthly-payments/entities/monthly-payment.entity';
+import { User } from '../user/entities/user.entity';
 import { CreateMonthlyPaymentMadeDto } from './dto/create-monthly-payment-made.dto';
 import { UpdateMonthlyPaymentMadeDto } from './dto/update-monthly-payment-made.dto';
+import { MonthlyPaymentMade } from './entities/monthly-payment-made.entity';
 
 @Injectable()
 export class MonthlyPaymentsMadeService {
-  create(createMonthlyPaymentMadeDto: CreateMonthlyPaymentMadeDto) {
-    return 'This action adds a new monthlyPaymentMade';
+  constructor(
+    @InjectRepository(MonthlyPaymentMade)
+    private monthlyPaymentMadeRepository: Repository<MonthlyPaymentMade>,
+
+    @InjectRepository(MonthlyPayment)
+    private monthlyPaymentRepository: Repository<MonthlyPayment>,
+
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
+
+  async create(createMonthlyPaymentMadeDto: CreateMonthlyPaymentMadeDto) {
+    const monthlyPayment = await this.monthlyPaymentRepository.findOne(
+      createMonthlyPaymentMadeDto.monthlyPaymentId,
+    );
+
+    const user = await this.userRepository.findOne(
+      createMonthlyPaymentMadeDto.userId,
+    );
+
+    const mpm = this.monthlyPaymentMadeRepository.create(
+      createMonthlyPaymentMadeDto,
+    );
+
+    mpm.monthly_paymet = monthlyPayment;
+    mpm.user = user;
+
+    const res = await this.monthlyPaymentMadeRepository.save(mpm);
+
+    const { password, status, ...rest } = res.user;
+
+    res.user = rest as User;
+
+    return res;
   }
 
-  findAll() {
-    return `This action returns all monthlyPaymentMades`;
+  async findAll() {
+    const res = await this.monthlyPaymentMadeRepository.find({
+      relations: ['user', 'monthly_paymet'],
+    });
+
+    return res.map((r) => ({
+      ...r,
+      user: { id: r.user.id, name: r.user.name, email: r.user.email },
+    }));
   }
 
-  findByUser() {
-    return `This action return monthlyPaymentMades for user`;
+  async findByUser(id: number, year: string) {
+    const res = await createQueryBuilder('MonthlyPaymentMade')
+      .leftJoinAndSelect('MonthlyPaymentMade.user', 'user')
+      .leftJoinAndSelect('MonthlyPaymentMade.monthly_paymet', 'monthlyPayment')
+      .where('user.id = :id', { id })
+      .andWhere('monthlyPayment.year = :year', { year })
+      .getMany();
+
+    return res.map((r: any) => ({
+      ...r,
+      user: { id: r.user.id, name: r.user.name, email: r.user.email },
+    }));
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} monthlyPaymentMade`;
+  async findOne(id: number) {
+    const res = await this.monthlyPaymentMadeRepository.findOne(id, {
+      relations: ['user', 'monthly_paymet'],
+    });
+
+    const { password, status, ...rest } = res.user;
+
+    res.user = rest as User;
+    return res;
   }
 
-  update(id: number, updateMonthlyPaymentMadeDto: UpdateMonthlyPaymentMadeDto) {
-    return `This action updates a #${id} monthlyPaymentMade`;
+  async update(
+    id: number,
+    updateMonthlyPaymentMadeDto: UpdateMonthlyPaymentMadeDto,
+  ) {
+    const mpm = await this.monthlyPaymentMadeRepository.findOne(id, {
+      relations: ['user', 'monthly_paymet'],
+    });
+    this.monthlyPaymentMadeRepository.merge(mpm, updateMonthlyPaymentMadeDto);
+
+    const res = await this.monthlyPaymentMadeRepository.save(mpm);
+
+    const { password, status, ...rest } = res.user;
+    res.user = rest as User;
+    return res;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} monthlyPaymentMade`;
+  async remove(id: number) {
+    const mpm = await this.monthlyPaymentMadeRepository.findOne(id, {
+      relations: ['user', 'monthly_paymet'],
+    });
+
+    const { password, status, ...rest } = mpm.user;
+    mpm.user = rest as User;
+
+    await this.monthlyPaymentMadeRepository.delete(id);
+
+    return mpm;
   }
 }

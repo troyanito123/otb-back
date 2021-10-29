@@ -7,6 +7,7 @@ import {
   Delete,
   UseGuards,
   Put,
+  Query,
 } from '@nestjs/common';
 import { MonthlyPaymentsMadeService } from './monthly-payments-made.service';
 import { CreateMonthlyPaymentMadeDto } from './dto/create-monthly-payment-made.dto';
@@ -14,6 +15,8 @@ import { UpdateMonthlyPaymentMadeDto } from './dto/update-monthly-payment-made.d
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/authorization/role.guard';
 import { RoleOptions, Roles } from '../auth/authorization/role.decorator';
+import { FindByUser } from './dto/find-by-user.dto';
+import { FindOneDto } from './dto/find-one-dto';
 
 @Controller('monthly-payments-made')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -35,23 +38,23 @@ export class MonthlyPaymentsMadeController {
   }
 
   @Get('user/:id')
-  findByUser() {
-    return this.monthlyPaymentMadesService.findByUser();
+  findByUser(@Param() params: FindByUser, @Query() query: { year: string }) {
+    return this.monthlyPaymentMadesService.findByUser(params.id, query.year);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.monthlyPaymentMadesService.findOne(+id);
+  findOne(@Param() params: FindOneDto) {
+    return this.monthlyPaymentMadesService.findOne(params.id);
   }
 
   @Put(':id')
   @Roles(RoleOptions.Admin)
   update(
-    @Param('id') id: string,
+    @Param() params: FindOneDto,
     @Body() updateMonthlyPaymentMadeDto: UpdateMonthlyPaymentMadeDto,
   ) {
     return this.monthlyPaymentMadesService.update(
-      +id,
+      params.id,
       updateMonthlyPaymentMadeDto,
     );
   }
