@@ -12,7 +12,7 @@ export class AuthService {
   async validateUser(email: string, password: string) {
     const user = await this.userService.findByEmail(email);
     if (user && user.authenicate(password)) {
-      const { password, role, status, ...result } = user;
+      const { password, role, ...result } = user;
       const obj = result as any;
       obj.role = user.role.code;
       return obj;
