@@ -1,8 +1,8 @@
 {
-  "name": "sanjose-back",
+  "name": "otb-back",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Sistema para la gestion de pagos de JUNTAS VECINALES",
+  "author": "Jassmanni Quiñones Alvarez",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
