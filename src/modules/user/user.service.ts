@@ -29,7 +29,14 @@ export class UserService {
 
   async findAll() {
     return this.userRepository.find({
-      select: ['email', 'id', 'name', 'status'],
+      select: [
+        'id',
+        'name',
+        'email',
+        'status',
+        'address_number',
+        'block_number',
+      ],
       relations: ['role'],
     });
   }
@@ -37,7 +44,14 @@ export class UserService {
   findOne(id: number) {
     return this.userRepository.findOne({
       where: { id },
-      select: ['id', 'name', 'email', 'status'],
+      select: [
+        'id',
+        'name',
+        'email',
+        'status',
+        'address_number',
+        'block_number',
+      ],
       relations: ['role'],
     });
   }

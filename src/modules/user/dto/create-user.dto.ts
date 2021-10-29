@@ -16,6 +16,12 @@ export class CreateUserDto {
   @MinLength(6)
   password: string;
 
+  @IsNotEmpty()
+  address_number: string;
+
+  @IsNotEmpty()
+  block_number: string;
+
   @IsOptional()
   @ExistsOnDatabase(Role)
   roleId: number;

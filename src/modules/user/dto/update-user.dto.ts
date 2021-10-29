@@ -14,6 +14,12 @@ export class UpdateUserDto {
   @IsEnum(UserStatus)
   status: UserStatus;
 
+  @IsNotEmpty()
+  address_number: string;
+
+  @IsNotEmpty()
+  block_number: string;
+
   @ExistsOnDatabase(Role)
   roleId: number;
 }

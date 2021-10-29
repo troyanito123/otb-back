@@ -28,6 +28,12 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ default: 'UNDEFINED' })
+  address_number: string;
+
+  @Column({ default: 'UNDEFINED' })
+  block_number: string;
+
   @Column({ default: UserStatus.ACTIVE })
   status: UserStatus;
 
