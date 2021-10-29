@@ -24,11 +24,11 @@ export class UserService {
     newUser.password = PasswordEncrypter.encrypt(createUserDto.password);
 
     const { password, ...data } = await this.userRepository.save(newUser);
-    return data;
+    return { ...data, role: data.role.code };
   }
 
   async findAll() {
-    return this.userRepository.find({
+    const users = await this.userRepository.find({
       select: [
         'id',
         'name',
@@ -38,11 +38,14 @@ export class UserService {
         'block_number',
       ],
       relations: ['role'],
+      order: { name: 'ASC' },
     });
+
+    return users.map((u) => ({ ...u, role: u.role.code }));
   }
 
-  findOne(id: number) {
-    return this.userRepository.findOne({
+  async findOne(id: number) {
+    const user = await this.userRepository.findOne({
       where: { id },
       select: [
         'id',
@@ -54,6 +57,12 @@ export class UserService {
       ],
       relations: ['role'],
     });
+
+    const { role, ...rest } = user;
+
+    const obj = rest as any;
+    obj.role = user.role.code;
+    return obj;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
@@ -61,16 +70,18 @@ export class UserService {
     this.userRepository.merge(user, updateUserDto);
     user.role = await this.roleService.findOne(updateUserDto.roleId);
     try {
-      return await this.userRepository.save(user);
+      const newUser = await this.userRepository.save(user);
+      return { ...newUser, role: newUser.role.code };
     } catch (error) {
       return null;
     }
   }
 
   async remove(id: number) {
-    const user = await this.findOne(id);
+    const user = await this.userRepository.findOne(id, { relations: ['role'] });
     user.status = UserStatus.DELETE;
-    return this.userRepository.save(user);
+    const { password, ...rest } = await this.userRepository.save(user);
+    return { ...rest, role: user.role.code };
   }
 
   findByEmail(email: string) {
