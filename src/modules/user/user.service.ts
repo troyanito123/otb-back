@@ -32,6 +32,7 @@ export class UserService {
       select: [
         'id',
         'name',
+        'identification_number',
         'email',
         'status',
         'address_number',
@@ -50,6 +51,7 @@ export class UserService {
       select: [
         'id',
         'name',
+        'identification_number',
         'email',
         'status',
         'address_number',

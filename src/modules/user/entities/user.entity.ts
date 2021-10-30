@@ -11,6 +11,7 @@ import { MonthlyPaymentMade } from 'src/modules/monthly-payment-mades/entities/m
 
 export enum UserStatus {
   ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
   DELETE = 'DELETE',
 }
 
@@ -25,6 +26,9 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column({ nullable: true })
+  identification_number: string;
+
   @Column()
   password: string;
 
@@ -34,7 +38,7 @@ export class User {
   @Column({ default: 'UNDEFINED' })
   block_number: string;
 
-  @Column({ default: UserStatus.ACTIVE })
+  @Column({ default: UserStatus.INACTIVE })
   status: UserStatus;
 
   @ManyToOne(() => Role, (role) => role.users)
