@@ -16,6 +16,9 @@ export class CreateUserDto {
   @MinLength(6)
   password: string;
 
+  @IsOptional()
+  identification_number: string;
+
   @IsNotEmpty()
   address_number: string;
 
