@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { createQueryBuilder, Repository } from 'typeorm';
 import { MonthlyPayment } from '../monthly-payments/entities/monthly-payment.entity';
 import { User } from '../user/entities/user.entity';
+import { CreateManyPaymentsDto } from './dto/create-many-payments.dto';
 import { CreateMonthlyPaymentMadeDto } from './dto/create-monthly-payment-made.dto';
 import { UpdateMonthlyPaymentMadeDto } from './dto/update-monthly-payment-made.dto';
 import { MonthlyPaymentMade } from './entities/monthly-payment-made.entity';
@@ -108,5 +109,33 @@ export class MonthlyPaymentsMadeService {
     await this.monthlyPaymentMadeRepository.delete(id);
 
     return mpm;
+  }
+
+  async createMany(createManyPaymentsDto: CreateManyPaymentsDto) {
+    const user = await this.userRepository.findOne(
+      createManyPaymentsDto.userId,
+    );
+
+    const monthIds = JSON.parse(createManyPaymentsDto.monthsId) as number[];
+
+    const res = [];
+
+    for (let i = 0; i < monthIds.length; i++) {
+      const monthId = monthIds[i];
+      const payment = await this.monthlyPaymentRepository.findOne(monthId);
+      const paymentMade = this.monthlyPaymentMadeRepository.create();
+      paymentMade.user = user;
+      paymentMade.monthly_paymet = payment;
+      paymentMade.amount = payment.amount;
+      const partialRes = await this.monthlyPaymentMadeRepository.save(
+        paymentMade,
+      );
+
+      const { password, status, ...rest } = partialRes.user;
+      partialRes.user = rest as User;
+      res.push(partialRes);
+    }
+
+    return res;
   }
 }
