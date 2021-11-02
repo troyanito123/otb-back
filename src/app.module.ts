@@ -12,6 +12,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { MonthlyPaymentsModule } from './modules/monthly-payments/monthly-payments.module';
 import { MonthlyPaymentMadesModule } from './modules/monthly-payment-mades/monthly-payments-made.module';
 import { ContributionsModule } from './modules/contributions/contributions.module';
+import { ContributionsPaidModule } from './modules/contributions-paid/contributions-paid.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ContributionsModule } from './modules/contributions/contributions.modul
     MonthlyPaymentsModule,
     MonthlyPaymentMadesModule,
     ContributionsModule,
+    ContributionsPaidModule,
   ],
   controllers: [AppController],
   providers: [AppService],

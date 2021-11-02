@@ -8,6 +8,8 @@ import {
 } from 'typeorm';
 import { PasswordEncrypter } from '../../../utils/password-encrypter';
 import { MonthlyPaymentMade } from 'src/modules/monthly-payment-mades/entities/monthly-payment-made.entity';
+import { Contribution } from 'src/modules/contributions/entities/contribution.entity';
+import { ContributionsPaid } from 'src/modules/contributions-paid/entities/contributions-paid.entity';
 
 export enum UserStatus {
   ACTIVE = 'ACTIVE',
@@ -54,6 +56,17 @@ export class User {
     },
   )
   monthly_payments_made: MonthlyPaymentMade[];
+
+  @OneToMany(
+    () => ContributionsPaid,
+    (contributionPaid) => contributionPaid.user,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
+  contributions_paid: ContributionsPaid[];
 
   authenicate(password: string): boolean {
     return PasswordEncrypter.compare(password, this.password);
