@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Contribution } from '../contributions/entities/contribution.entity';
 import { User } from '../user/entities/user.entity';
 import { CreateContributionsPaidDto } from './dto/create-contributions-paid.dto';
+import { CreateManyContributionsPaidDto } from './dto/create-many-contributions-paid.dto';
 import { UpdateContributionsPaidDto } from './dto/update-contributions-paid.dto';
 import { ContributionsPaid } from './entities/contributions-paid.entity';
 
@@ -37,6 +38,29 @@ export class ContributionsPaidService {
     const { password, ...rest } = user;
     saved.user = rest as User;
     return saved;
+  }
+
+  async createMany(createManyDto: CreateManyContributionsPaidDto) {
+    const contributionsId = JSON.parse(createManyDto.contributionsId);
+    const user = await this.userRepository.findOne(createManyDto.userId);
+    const res: ContributionsPaid[] = [];
+    for (let i = 0; i < contributionsId.length; i++) {
+      const cid = contributionsId[i];
+      const contribution = await this.contributionRepository.findOne(cid);
+      const contributionPaid = this.contributionsPaidRepository.create({
+        amount: contribution.amount,
+        user,
+        contribution,
+      });
+      const partial = await this.contributionsPaidRepository.save(
+        contributionPaid,
+      );
+      res.push(partial);
+    }
+    return res.map((r) => ({
+      ...r,
+      user: { id: r.user.id, name: r.user.name, email: r.user.email },
+    }));
   }
 
   async findAll() {
