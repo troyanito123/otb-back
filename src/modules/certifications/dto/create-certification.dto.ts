@@ -18,6 +18,7 @@ export class CreateCertificationDto {
   @IsDateString()
   date: Date;
 
+  @IsNotEmpty()
   @ExistsOnDatabase(User)
   userId: number;
 }
