@@ -13,6 +13,7 @@ import { MonthlyPaymentsModule } from './modules/monthly-payments/monthly-paymen
 import { MonthlyPaymentMadesModule } from './modules/monthly-payment-mades/monthly-payments-made.module';
 import { ContributionsModule } from './modules/contributions/contributions.module';
 import { ContributionsPaidModule } from './modules/contributions-paid/contributions-paid.module';
+import { CertificationsModule } from './modules/certifications/certifications.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ContributionsPaidModule } from './modules/contributions-paid/contributi
     MonthlyPaymentMadesModule,
     ContributionsModule,
     ContributionsPaidModule,
+    CertificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
