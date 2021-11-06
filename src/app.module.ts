@@ -14,6 +14,7 @@ import { MonthlyPaymentMadesModule } from './modules/monthly-payment-mades/month
 import { ContributionsModule } from './modules/contributions/contributions.module';
 import { ContributionsPaidModule } from './modules/contributions-paid/contributions-paid.module';
 import { CertificationsModule } from './modules/certifications/certifications.module';
+import { MeetingsModule } from './modules/meetings/meetings.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CertificationsModule } from './modules/certifications/certifications.mo
     ContributionsModule,
     ContributionsPaidModule,
     CertificationsModule,
+    MeetingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
