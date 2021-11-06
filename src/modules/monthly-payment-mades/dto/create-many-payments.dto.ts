@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsDateString, IsNotEmpty } from 'class-validator';
 
 export class CreateManyPaymentsDto {
   @IsNotEmpty()
@@ -6,4 +6,8 @@ export class CreateManyPaymentsDto {
 
   @IsNotEmpty()
   monthsId: string;
+
+  @IsNotEmpty()
+  @IsDateString()
+  date: Date;
 }

@@ -127,6 +127,7 @@ export class MonthlyPaymentsMadeService {
       paymentMade.user = user;
       paymentMade.monthly_paymet = payment;
       paymentMade.amount = payment.amount;
+      paymentMade.date = createManyPaymentsDto.date;
       const partialRes = await this.monthlyPaymentMadeRepository.save(
         paymentMade,
       );

@@ -8,6 +8,9 @@ export class MonthlyPaymentMade extends CustomEntity {
   @Column()
   amount: number;
 
+  @Column({ default: new Date().toISOString() })
+  date: Date;
+
   @ManyToOne(() => User, (user) => user.monthly_payments_made)
   user: User;
 
