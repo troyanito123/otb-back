@@ -18,7 +18,7 @@ export class Certification extends CustomEntity {
   @Column({ default: CertificationType.SIMPLE })
   type: CertificationType;
 
-  @Column({ default: '2021-01-01 00:01:00.000' })
+  @Column({ nullable: true })
   date: Date;
 
   @ManyToOne(() => User, (user) => user.certifications)

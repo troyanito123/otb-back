@@ -8,7 +8,7 @@ export class MonthlyPaymentMade extends CustomEntity {
   @Column()
   amount: number;
 
-  @Column({ default: '2021-01-01 00:01:00.000' })
+  @Column({ nullable: true })
   date: Date;
 
   @ManyToOne(() => User, (user) => user.monthly_payments_made)
