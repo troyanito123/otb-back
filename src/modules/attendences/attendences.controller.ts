@@ -13,6 +13,7 @@ import { RolesGuard } from '../auth/authorization/role.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AttendencesService } from './attendences.service';
 import { CreateAttendenceDto } from './dto/create-attendence.dto';
+import { FindAttendenceBymeeting } from './dto/find-attendence-bymeeting.dto';
 import { FindAttendenceByuser } from './dto/find-attendence-byuser.dto';
 import { FindOneAttendenceDto } from './dto/find-one-attendence.dto';
 import { UpdateAttendenceDto } from './dto/update-attendence.dto';
@@ -34,10 +35,16 @@ export class AttendencesController {
     return this.attendencesService.findAll();
   }
 
-  @Get()
+  @Get('user/:id')
   @Roles(RoleOptions.Admin)
   findByUser(@Param() params: FindAttendenceByuser) {
     return this.attendencesService.findByUser(params.id);
+  }
+
+  @Get('meeting/:id')
+  @Roles(RoleOptions.Admin)
+  findByMeeting(@Param() params: FindAttendenceBymeeting) {
+    return this.attendencesService.findByMeeting(params.id);
   }
 
   @Get(':id')
