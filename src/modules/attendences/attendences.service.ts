@@ -12,6 +12,10 @@ export class AttendencesService {
     return `This action returns all attendences`;
   }
 
+  findByUser(id: number) {
+    return `This action returns all attendences for user`;
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} attendence`;
   }

@@ -1,4 +1,13 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateAttendenceDto } from './create-attendence.dto';
+import { IsNotEmpty } from 'class-validator';
+import { Meeting } from 'src/modules/meetings/entities/meeting.entity';
+import { User } from 'src/modules/user/entities/user.entity';
+import { ExistsOnDatabase } from 'src/validations/exists-on-database';
+export class UpdateAttendenceDto {
+  @IsNotEmpty()
+  @ExistsOnDatabase(User)
+  userId: number;
 
-export class UpdateAttendenceDto extends PartialType(CreateAttendenceDto) {}
+  @IsNotEmpty()
+  @ExistsOnDatabase(Meeting)
+  meetingId: number;
+}
