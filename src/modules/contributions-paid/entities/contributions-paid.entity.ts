@@ -8,6 +8,9 @@ export class ContributionsPaid extends CustomEntity {
   @Column()
   amount: number;
 
+  @Column({ default: new Date().toISOString() })
+  date: Date;
+
   @ManyToOne(() => User, (user) => user.contributions_paid)
   user: User;
 

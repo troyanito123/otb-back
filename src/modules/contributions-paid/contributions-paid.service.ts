@@ -51,6 +51,7 @@ export class ContributionsPaidService {
         amount: contribution.amount,
         user,
         contribution,
+        date: createManyDto.date,
       });
       const partial = await this.contributionsPaidRepository.save(
         contributionPaid,
