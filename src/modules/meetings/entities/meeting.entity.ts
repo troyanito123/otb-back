@@ -15,6 +15,6 @@ export class Meeting extends CustomEntity {
   @Column()
   fine_amount: number;
 
-  @Column({ type: 'text' })
-  conlutions: string;
+  @Column({ type: 'text', nullable: true })
+  conclutions: string;
 }
