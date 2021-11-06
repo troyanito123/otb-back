@@ -11,6 +11,7 @@ import { MonthlyPaymentMade } from 'src/modules/monthly-payment-mades/entities/m
 import { Contribution } from 'src/modules/contributions/entities/contribution.entity';
 import { ContributionsPaid } from 'src/modules/contributions-paid/entities/contributions-paid.entity';
 import { Certification } from 'src/modules/certifications/entities/certification.entity';
+import { Attendence } from 'src/modules/attendences/entities/attendence.entity';
 
 export enum UserStatus {
   ACTIVE = 'ACTIVE',
@@ -75,6 +76,13 @@ export class User {
     onUpdate: 'CASCADE',
   })
   certifications: Certification[];
+
+  @OneToMany(() => Attendence, (attendence) => attendence.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  attendences: Attendence[];
 
   authenicate(password: string): boolean {
     return PasswordEncrypter.compare(password, this.password);
