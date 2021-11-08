@@ -1,26 +1,37 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
+import { Expense } from './entities/expense.entity';
 
 @Injectable()
 export class ExpensesService {
+  constructor(
+    @InjectRepository(Expense) private expenseRepository: Repository<Expense>,
+  ) {}
   create(createExpenseDto: CreateExpenseDto) {
-    return 'This action adds a new expense';
+    const expense = this.expenseRepository.create(createExpenseDto);
+    return this.expenseRepository.save(expense);
   }
 
   findAll() {
-    return `This action returns all expenses`;
+    return this.expenseRepository.find({ order: { date: 'ASC' } });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} expense`;
+    return this.expenseRepository.findOne(id);
   }
 
-  update(id: number, updateExpenseDto: UpdateExpenseDto) {
-    return `This action updates a #${id} expense`;
+  async update(id: number, updateExpenseDto: UpdateExpenseDto) {
+    const expense = await this.expenseRepository.findOne(id);
+    this.expenseRepository.merge(expense, updateExpenseDto);
+    return this.expenseRepository.save(expense);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} expense`;
+  async remove(id: number) {
+    const expense = await this.expenseRepository.findOne(id);
+    await this.expenseRepository.delete(id);
+    return expense;
   }
 }

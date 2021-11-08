@@ -3,10 +3,10 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
@@ -37,7 +37,7 @@ export class ExpensesController {
     return this.expensesService.findOne(params.id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param() params: FindOneExpenseDto,
     @Body() updateExpenseDto: UpdateExpenseDto,
