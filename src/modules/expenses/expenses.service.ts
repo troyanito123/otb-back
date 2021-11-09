@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getManager, Repository } from 'typeorm';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { Expense } from './entities/expense.entity';
@@ -33,5 +33,12 @@ export class ExpensesService {
     const expense = await this.expenseRepository.findOne(id);
     await this.expenseRepository.delete(id);
     return expense;
+  }
+
+  async getSumAmount() {
+    return getManager()
+      .createQueryBuilder(Expense, 'expense')
+      .select('SUM(expense.amount)', 'total')
+      .getRawOne();
   }
 }

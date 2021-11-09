@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { createQueryBuilder, Repository } from 'typeorm';
+import { createQueryBuilder, getManager, Repository } from 'typeorm';
 import { MonthlyPayment } from '../monthly-payments/entities/monthly-payment.entity';
 import { User } from '../user/entities/user.entity';
 import { CreateManyPaymentsDto } from './dto/create-many-payments.dto';
@@ -138,5 +138,12 @@ export class MonthlyPaymentsMadeService {
     }
 
     return res;
+  }
+
+  async getSumAmount() {
+    return getManager()
+      .createQueryBuilder(MonthlyPaymentMade, 'monthlyPaymentMade')
+      .select('SUM(monthlyPaymentMade.amount)', 'total')
+      .getRawOne();
   }
 }

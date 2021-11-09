@@ -48,6 +48,12 @@ export class ContributionsPaidController {
     return this.contributionsPaidService.findByUser(params.id);
   }
 
+  @Get('total-amount')
+  @Roles(RoleOptions.Admin)
+  getSumAmount() {
+    return this.contributionsPaidService.getSumAmount();
+  }
+
   @Get(':id')
   findOne(@Param() params: FindOneContributionsPaidDto) {
     return this.contributionsPaidService.findOne(params.id);

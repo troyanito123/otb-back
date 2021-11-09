@@ -32,6 +32,12 @@ export class ExpensesController {
     return this.expensesService.findAll();
   }
 
+  @Get('total-amount')
+  @Roles(RoleOptions.Admin)
+  getSumAmount() {
+    return this.expensesService.getSumAmount();
+  }
+
   @Get(':id')
   findOne(@Param() params: FindOneExpenseDto) {
     return this.expensesService.findOne(params.id);

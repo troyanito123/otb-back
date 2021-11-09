@@ -34,6 +34,12 @@ export class CertificationsController {
     return this.certificationsService.findAll();
   }
 
+  @Get('total-amount')
+  @Roles(RoleOptions.Admin)
+  getSumAmount() {
+    return this.certificationsService.getSumAmount();
+  }
+
   @Get(':id')
   @Roles(RoleOptions.Admin)
   findOne(@Param() params: FindOneCertificationDto) {

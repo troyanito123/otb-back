@@ -49,6 +49,12 @@ export class MonthlyPaymentsMadeController {
     return this.monthlyPaymentMadesService.findByUser(params.id, query.year);
   }
 
+  @Get('total-amount')
+  @Roles(RoleOptions.Admin)
+  getSumAmount() {
+    return this.monthlyPaymentMadesService.getSumAmount();
+  }
+
   @Get(':id')
   findOne(@Param() params: FindOneDto) {
     return this.monthlyPaymentMadesService.findOne(params.id);

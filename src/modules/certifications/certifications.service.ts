@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getManager, Repository } from 'typeorm';
 import { User } from '../user/entities/user.entity';
 import { CreateCertificationDto } from './dto/create-certification.dto';
 import { UpdateCertificationDto } from './dto/update-certification.dto';
@@ -95,5 +95,12 @@ export class CertificationsService {
         email: certification.user.email,
       },
     };
+  }
+
+  async getSumAmount() {
+    return getManager()
+      .createQueryBuilder(Certification, 'certification')
+      .select('SUM(certification.amount)', 'total')
+      .getRawOne();
   }
 }

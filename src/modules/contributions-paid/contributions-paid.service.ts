@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {
+  createQueryBuilder,
+  getConnection,
+  getManager,
+  getRepository,
+  Repository,
+} from 'typeorm';
 import { Contribution } from '../contributions/entities/contribution.entity';
 import { User } from '../user/entities/user.entity';
 import { CreateContributionsPaidDto } from './dto/create-contributions-paid.dto';
@@ -130,5 +136,12 @@ export class ContributionsPaidService {
     const { password, ...rest } = user;
     contributionPaid.user = rest as User;
     return contributionPaid;
+  }
+
+  async getSumAmount() {
+    return getManager()
+      .createQueryBuilder(ContributionsPaid, 'contributionsPaid')
+      .select('SUM(contributionsPaid.amount)', 'total')
+      .getRawOne();
   }
 }
