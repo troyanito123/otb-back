@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PasswordEncrypter } from 'src/utils/password-encrypter';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { RoleCode, RoleService } from '../role/role.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { FindAllUsersDto } from './dto/find-all-users.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserStatus } from './entities/user.entity';
 
@@ -29,8 +30,14 @@ export class UserService {
     return { ...data, role: data.role.code };
   }
 
-  async findAll() {
-    const users = await this.userRepository.find({
+  async findAll(query: FindAllUsersDto) {
+    const page = query.page || 0;
+    const keyword = query.keyword || '';
+    const take = query.take || 10;
+    const skip = page * take;
+    const sort = query.sort || 'DESC';
+
+    const [users, count] = await this.userRepository.findAndCount({
       select: [
         'id',
         'name',
@@ -40,11 +47,14 @@ export class UserService {
         'address_number',
         'block_number',
       ],
+      where: { name: Like('%' + keyword.toUpperCase() + '%') },
       relations: ['role'],
-      order: { name: 'ASC' },
+      order: { name: sort },
+      take,
+      skip,
     });
 
-    return users.map((u) => ({ ...u, role: u.role.code }));
+    return { users: users.map((u) => ({ ...u, role: u.role.code })), count };
   }
 
   async findOne(id: number) {
