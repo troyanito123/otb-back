@@ -35,7 +35,7 @@ export class UserService {
     const keyword = query.keyword || '';
     const take = query.take || 10;
     const skip = page * take;
-    const sort = query.sort || 'DESC';
+    const sort = query.sort || 'ASC';
 
     const [users, count] = await this.userRepository.findAndCount({
       select: [
