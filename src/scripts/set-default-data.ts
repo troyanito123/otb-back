@@ -19,9 +19,9 @@ const setDefaultData = async (configService: ConfigService) => {
 
   if (!roleAdmin) {
     const newAdminRole = roleRepository.create({
-      name: 'Administrator',
+      name: 'Administrador',
       code: 'ADMIN',
-      description: 'Can do anything',
+      description: 'Tiene absoluto control sobre la aplicacion',
     });
     roleAdmin = await roleRepository.save(newAdminRole);
   }
@@ -35,9 +35,9 @@ const setDefaultData = async (configService: ConfigService) => {
 
   if (!roleUser) {
     const newRoleUser = roleRepository.create({
-      name: 'Usuer',
+      name: 'Usuario',
       code: 'USER',
-      description: 'can not create users',
+      description: 'Usuario mas restringido',
     });
     await roleRepository.save(newRoleUser);
   }
@@ -56,6 +56,8 @@ const setDefaultData = async (configService: ConfigService) => {
       password: PasswordEncrypter.encrypt(
         configService.get(ConfigOptions.defaultUserPassword),
       ),
+      block_number: '00',
+      address_number: '00',
       role: roleAdmin,
     });
     await userRepository.save(newuser);
