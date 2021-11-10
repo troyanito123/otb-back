@@ -9,10 +9,11 @@ export class CreateUserDto {
   @IsNotEmpty()
   name: string;
 
-  @IsEmail()
+  @IsOptional()
   @UniqueOnDatabase(User)
   email: string;
 
+  @IsOptional()
   @MinLength(6)
   password: string;
 

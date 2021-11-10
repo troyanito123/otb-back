@@ -21,7 +21,9 @@ export class UserService {
       newUser.role = await this.roleService.findOne(createUserDto.roleId);
     }
     newUser.role = await this.roleService.findByCode(RoleCode.USER);
-    newUser.password = PasswordEncrypter.encrypt(createUserDto.password);
+    if (createUserDto.password) {
+      newUser.password = PasswordEncrypter.encrypt(createUserDto.password);
+    }
 
     const { password, ...data } = await this.userRepository.save(newUser);
     return { ...data, role: data.role.code };
