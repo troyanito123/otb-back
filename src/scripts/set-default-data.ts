@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { ConfigOptions } from 'src/config/config';
 import { Role } from '../modules/role/entities/role.entity';
-import { User } from '../modules/user/entities/user.entity';
+import { User, UserStatus } from '../modules/user/entities/user.entity';
 import { PasswordEncrypter } from '../utils/password-encrypter';
 
 const setDefaultData = async (configService: ConfigService) => {
@@ -59,6 +59,7 @@ const setDefaultData = async (configService: ConfigService) => {
       block_number: '00',
       address_number: '00',
       role: roleAdmin,
+      status: UserStatus.ACTIVE,
     });
     await userRepository.save(newuser);
   }
