@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getManager, Repository } from 'typeorm';
+import { getManager, Like, Repository } from 'typeorm';
 import { CreateExpenseDto } from './dto/create-expense.dto';
+import { FindAllExpensesDto } from './dto/find-all-expenses.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { Expense } from './entities/expense.entity';
 
@@ -15,8 +16,20 @@ export class ExpensesService {
     return this.expenseRepository.save(expense);
   }
 
-  findAll() {
-    return this.expenseRepository.find({ order: { date: 'ASC' } });
+  async findAll(query: FindAllExpensesDto) {
+    const page = query.page || 0;
+    const keyword = query.keyword || '';
+    const take = query.take || 10;
+    const skip = page * take;
+    const sort = query.sort || 'DESC';
+
+    const [expenses, count] = await this.expenseRepository.findAndCount({
+      where: { description: Like('%' + keyword.toUpperCase() + '%') },
+      order: { date: sort },
+      take,
+      skip,
+    });
+    return { expenses, count };
   }
 
   findOne(id: number) {

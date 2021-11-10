@@ -7,6 +7,7 @@ import {
   Delete,
   UseGuards,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
@@ -15,6 +16,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/authorization/role.guard';
 import { RoleOptions, Roles } from '../auth/authorization/role.decorator';
 import { FindOneExpenseDto } from './dto/find-one-expense.dto';
+import { FindAllExpensesDto } from './dto/find-all-expenses.dto';
 
 @Controller('expenses')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -28,8 +30,8 @@ export class ExpensesController {
   }
 
   @Get()
-  findAll() {
-    return this.expensesService.findAll();
+  findAll(@Query() query: FindAllExpensesDto) {
+    return this.expensesService.findAll(query);
   }
 
   @Get('total-amount')
