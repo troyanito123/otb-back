@@ -17,7 +17,7 @@ export class MeetingsService {
   }
 
   findAll() {
-    return this.meetingRepository.find();
+    return this.meetingRepository.find({ order: { date: 'ASC' } });
   }
 
   findOne(id: number) {
