@@ -12,6 +12,7 @@ import { Contribution } from 'src/modules/contributions/entities/contribution.en
 import { ContributionsPaid } from 'src/modules/contributions-paid/entities/contributions-paid.entity';
 import { Certification } from 'src/modules/certifications/entities/certification.entity';
 import { Attendence } from 'src/modules/attendences/entities/attendence.entity';
+import { Fine } from 'src/modules/fines/entities/fine.entity';
 
 export enum UserStatus {
   ACTIVE = 'ACTIVE',
@@ -83,6 +84,13 @@ export class User {
     onUpdate: 'CASCADE',
   })
   attendences: Attendence[];
+
+  @OneToMany(() => Fine, (fine) => fine.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  fines: Fine[];
 
   authenicate(password: string): boolean {
     return PasswordEncrypter.compare(password, this.password);

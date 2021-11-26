@@ -17,6 +17,7 @@ import { CertificationsModule } from './modules/certifications/certifications.mo
 import { MeetingsModule } from './modules/meetings/meetings.module';
 import { AttendencesModule } from './modules/attendences/attendences.module';
 import { ExpensesModule } from './modules/expenses/expenses.module';
+import { FinesModule } from './modules/fines/fines.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { ExpensesModule } from './modules/expenses/expenses.module';
     MeetingsModule,
     AttendencesModule,
     ExpensesModule,
+    FinesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,5 +1,6 @@
 import { Attendence } from 'src/modules/attendences/entities/attendence.entity';
 import { CustomEntity } from 'src/modules/customEntity.entity';
+import { Fine } from 'src/modules/fines/entities/fine.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity('meetings')
@@ -25,4 +26,11 @@ export class Meeting extends CustomEntity {
     onUpdate: 'CASCADE',
   })
   attendences: Attendence[];
+
+  @OneToMany(() => Fine, (fine) => fine.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  fines: Fine[];
 }
