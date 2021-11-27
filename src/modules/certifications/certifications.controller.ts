@@ -7,12 +7,14 @@ import {
   Delete,
   UseGuards,
   Put,
+  Query,
 } from '@nestjs/common';
 import { RoleOptions, Roles } from '../auth/authorization/role.decorator';
 import { RolesGuard } from '../auth/authorization/role.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CertificationsService } from './certifications.service';
 import { CreateCertificationDto } from './dto/create-certification.dto';
+import { FindAllCertificationDto } from './dto/find-all-certification.dto';
 import { FindByuserCertificationDto } from './dto/find-byuser-certification.dto';
 import { FindOneCertificationDto } from './dto/find-one-certification.dto';
 import { UpdateCertificationDto } from './dto/update-certification.dto';
@@ -30,8 +32,8 @@ export class CertificationsController {
 
   @Get()
   @Roles(RoleOptions.Admin)
-  findAll() {
-    return this.certificationsService.findAll();
+  findAll(@Query() query: FindAllCertificationDto) {
+    return this.certificationsService.findAll(query);
   }
 
   @Get('total-amount')

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getManager, Repository } from 'typeorm';
+import { getConnection, getManager, Like, Repository } from 'typeorm';
 import { User } from '../user/entities/user.entity';
 import { CreateCertificationDto } from './dto/create-certification.dto';
+import { FindAllCertificationDto } from './dto/find-all-certification.dto';
 import { UpdateCertificationDto } from './dto/update-certification.dto';
 import { Certification } from './entities/certification.entity';
 
@@ -27,15 +28,29 @@ export class CertificationsService {
     return this.certificationRepository.save(certification);
   }
 
-  async findAll() {
-    const certifications = await this.certificationRepository.find({
-      relations: ['user'],
-    });
-
-    return certifications.map((c) => ({
-      ...c,
-      user: { id: c.user.id, name: c.user.name, email: c.user.email },
-    }));
+  async findAll(query: FindAllCertificationDto) {
+    const page = query.page || 0;
+    const keyword = query.keyword || '';
+    const take = query.take || 10;
+    const skip = page * take;
+    const sort = query.sort || 'DESC';
+    const column = query.column || 'date';
+    let columnOrder = 'certification.date';
+    if (column == 'name') {
+      columnOrder = 'user.name';
+    }
+    const [certifications, count] = await getConnection()
+      .createQueryBuilder(Certification, 'certification')
+      .leftJoin('certification.user', 'user')
+      .where('user.name ILIKE :name', { name: `%${keyword.toUpperCase()}%` })
+      .addSelect('user.id')
+      .addSelect('user.name')
+      .addSelect('user.email')
+      .limit(take)
+      .offset(skip)
+      .orderBy(columnOrder, sort)
+      .getManyAndCount();
+    return { certifications, count };
   }
 
   async findOne(id: number) {
