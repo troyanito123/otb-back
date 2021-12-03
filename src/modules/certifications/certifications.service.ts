@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, getManager, Like, Repository } from 'typeorm';
+import { Between, getConnection, getManager, Like, Repository } from 'typeorm';
 import { User } from '../user/entities/user.entity';
 import { CreateCertificationDto } from './dto/create-certification.dto';
 import { FindAllCertificationDto } from './dto/find-all-certification.dto';
+import { FindByDateCertificationsDto } from './dto/find-by-date-certifications.dto';
 import { UpdateCertificationDto } from './dto/update-certification.dto';
 import { Certification } from './entities/certification.entity';
 
@@ -117,5 +118,19 @@ export class CertificationsService {
       .createQueryBuilder(Certification, 'certification')
       .select('SUM(certification.amount)', 'total')
       .getRawOne();
+  }
+
+  async findByDateRange(findByDateDto: FindByDateCertificationsDto) {
+    const { initDate, endDate } = findByDateDto;
+    const certifications = await this.certificationRepository.find({
+      where: { date: Between(initDate, endDate) },
+      relations: ['user'],
+      order: { date: 'ASC' },
+    });
+
+    return certifications.map((r) => ({
+      ...r,
+      user: { id: r.user.id, name: r.user.name, email: r.user.email },
+    }));
   }
 }

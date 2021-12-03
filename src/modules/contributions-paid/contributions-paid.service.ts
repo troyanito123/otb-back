@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  Between,
   createQueryBuilder,
   getConnection,
   getManager,
@@ -11,6 +12,7 @@ import { Contribution } from '../contributions/entities/contribution.entity';
 import { User } from '../user/entities/user.entity';
 import { CreateContributionsPaidDto } from './dto/create-contributions-paid.dto';
 import { CreateManyContributionsPaidDto } from './dto/create-many-contributions-paid.dto';
+import { FindByDateContributionPaidDto } from './dto/find-by-date-contributions-paid.dto';
 import { UpdateContributionsPaidDto } from './dto/update-contributions-paid.dto';
 import { ContributionsPaid } from './entities/contributions-paid.entity';
 
@@ -143,5 +145,18 @@ export class ContributionsPaidService {
       .createQueryBuilder(ContributionsPaid, 'contributionsPaid')
       .select('SUM(contributionsPaid.amount)', 'total')
       .getRawOne();
+  }
+
+  async findByDateRange(findByDateDto: FindByDateContributionPaidDto) {
+    const { initDate, endDate } = findByDateDto;
+    const contributionPaids = await this.contributionsPaidRepository.find({
+      where: { date: Between(initDate, endDate) },
+      relations: ['user', 'contribution'],
+    });
+
+    return contributionPaids.map((r) => ({
+      ...r,
+      user: { id: r.user.id, name: r.user.name, email: r.user.email },
+    }));
   }
 }

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getManager, Repository } from 'typeorm';
+import { Between, getManager, Repository } from 'typeorm';
 import { Meeting } from '../meetings/entities/meeting.entity';
 import { User } from '../user/entities/user.entity';
 import { CreateFineDto } from './dto/create-fine.dto';
 import { CreateManyFinesDto } from './dto/create-many-fines.dto';
+import { FindByDateFinesDto } from './dto/find-by-date-fines.dto';
 import { UpdateFineDto } from './dto/update-fine.dto';
 import { Fine } from './entities/fine.entity';
 import { FinesRepository } from './fines.repository';
@@ -151,5 +152,25 @@ export class FinesService {
       .createQueryBuilder(Fine, 'fine')
       .select('SUM(fine.fine_paid)', 'total')
       .getRawOne();
+  }
+
+  async findByDateRange(findByDateDto: FindByDateFinesDto) {
+    const { initDate, endDate } = findByDateDto;
+    const fines = await this.fineRepository.find({
+      where: { date: Between(initDate, endDate) },
+      relations: ['user', 'meeting'],
+      order: { date: 'ASC' },
+    });
+
+    return fines.map((f) => ({
+      ...f,
+      user: { id: f.user.id, name: f.user.name, email: f.user.email },
+      meeting: {
+        id: f.meeting.id,
+        name: f.meeting.name,
+        fine_amount: f.meeting.fine_amount,
+        date: f.meeting.date,
+      },
+    }));
   }
 }

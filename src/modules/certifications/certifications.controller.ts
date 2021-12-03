@@ -15,6 +15,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CertificationsService } from './certifications.service';
 import { CreateCertificationDto } from './dto/create-certification.dto';
 import { FindAllCertificationDto } from './dto/find-all-certification.dto';
+import { FindByDateCertificationsDto } from './dto/find-by-date-certifications.dto';
 import { FindByuserCertificationDto } from './dto/find-byuser-certification.dto';
 import { FindOneCertificationDto } from './dto/find-one-certification.dto';
 import { UpdateCertificationDto } from './dto/update-certification.dto';
@@ -40,6 +41,12 @@ export class CertificationsController {
   @Roles(RoleOptions.Admin)
   getSumAmount() {
     return this.certificationsService.getSumAmount();
+  }
+
+  @Post('bydate')
+  @Roles(RoleOptions.Admin)
+  findByDateRange(@Body() findByDateDto: FindByDateCertificationsDto) {
+    return this.certificationsService.findByDateRange(findByDateDto);
   }
 
   @Get(':id')

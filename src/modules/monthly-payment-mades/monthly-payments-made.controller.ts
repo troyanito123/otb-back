@@ -18,6 +18,7 @@ import { RoleOptions, Roles } from '../auth/authorization/role.decorator';
 import { FindByUser } from './dto/find-by-user.dto';
 import { FindOneDto } from './dto/find-one-dto';
 import { CreateManyPaymentsDto } from './dto/create-many-payments.dto';
+import { FindByDateMonthlyPaymentsMadeDto } from './dto/find-by-date-monthly-payments-made.dto';
 
 @Controller('monthly-payments-made')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -36,6 +37,12 @@ export class MonthlyPaymentsMadeController {
   @Roles(RoleOptions.Admin)
   createMany(@Body() createManyPaymentsDto: CreateManyPaymentsDto) {
     return this.monthlyPaymentMadesService.createMany(createManyPaymentsDto);
+  }
+
+  @Post('bydate')
+  @Roles(RoleOptions.Admin)
+  findByDateRange(@Body() findByDateDto: FindByDateMonthlyPaymentsMadeDto) {
+    return this.monthlyPaymentMadesService.findByDateRange(findByDateDto);
   }
 
   @Get()

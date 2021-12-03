@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { createQueryBuilder, getManager, Repository } from 'typeorm';
+import { Between, createQueryBuilder, getManager, Repository } from 'typeorm';
 import { MonthlyPayment } from '../monthly-payments/entities/monthly-payment.entity';
 import { User } from '../user/entities/user.entity';
 import { CreateManyPaymentsDto } from './dto/create-many-payments.dto';
 import { CreateMonthlyPaymentMadeDto } from './dto/create-monthly-payment-made.dto';
+import { FindByDateMonthlyPaymentsMadeDto } from './dto/find-by-date-monthly-payments-made.dto';
 import { UpdateMonthlyPaymentMadeDto } from './dto/update-monthly-payment-made.dto';
 import { MonthlyPaymentMade } from './entities/monthly-payment-made.entity';
 
@@ -145,5 +146,19 @@ export class MonthlyPaymentsMadeService {
       .createQueryBuilder(MonthlyPaymentMade, 'monthlyPaymentMade')
       .select('SUM(monthlyPaymentMade.amount)', 'total')
       .getRawOne();
+  }
+
+  async findByDateRange(findByDateDto: FindByDateMonthlyPaymentsMadeDto) {
+    const { initDate, endDate } = findByDateDto;
+    const monthlyPaymentsMades = await this.monthlyPaymentMadeRepository.find({
+      where: { date: Between(initDate, endDate) },
+      relations: ['user', 'monthly_paymet'],
+      order: { date: 'ASC' },
+    });
+
+    return monthlyPaymentsMades.map((r) => ({
+      ...r,
+      user: { id: r.user.id, name: r.user.name, email: r.user.email },
+    }));
   }
 }

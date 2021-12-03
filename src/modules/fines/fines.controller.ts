@@ -17,6 +17,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/authorization/role.guard';
 import { RoleOptions, Roles } from '../auth/authorization/role.decorator';
 import { CreateManyFinesDto } from './dto/create-many-fines.dto';
+import { FindByDateFinesDto } from './dto/find-by-date-fines.dto';
 
 @Controller('fines')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -39,6 +40,12 @@ export class FinesController {
   @Roles(RoleOptions.Admin)
   getSumAmount() {
     return this.finesService.getSumAmount();
+  }
+
+  @Post('bydate')
+  @Roles(RoleOptions.Admin)
+  findByDateRange(@Body() findByDateDto: FindByDateFinesDto) {
+    return this.finesService.findByDateRange(findByDateDto);
   }
 
   @Get()

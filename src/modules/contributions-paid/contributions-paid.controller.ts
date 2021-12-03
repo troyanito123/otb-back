@@ -14,6 +14,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ContributionsPaidService } from './contributions-paid.service';
 import { CreateContributionsPaidDto } from './dto/create-contributions-paid.dto';
 import { CreateManyContributionsPaidDto } from './dto/create-many-contributions-paid.dto';
+import { FindByDateContributionPaidDto } from './dto/find-by-date-contributions-paid.dto';
 import { FindByUserContributionsPaidDto } from './dto/find-byuser-contributions-paid.dto copy';
 import { FindOneContributionsPaidDto } from './dto/find-one-contributions-paid.dto';
 import { UpdateContributionsPaidDto } from './dto/update-contributions-paid.dto';
@@ -35,6 +36,12 @@ export class ContributionsPaidController {
   @Roles(RoleOptions.Admin)
   createMany(@Body() createMany: CreateManyContributionsPaidDto) {
     return this.contributionsPaidService.createMany(createMany);
+  }
+
+  @Post('bydate')
+  @Roles(RoleOptions.Admin)
+  findByDateRange(@Body() findByDateDto: FindByDateContributionPaidDto) {
+    return this.contributionsPaidService.findByDateRange(findByDateDto);
   }
 
   @Get()
