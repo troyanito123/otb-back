@@ -17,6 +17,7 @@ import { RolesGuard } from '../auth/authorization/role.guard';
 import { RoleOptions, Roles } from '../auth/authorization/role.decorator';
 import { FindOneExpenseDto } from './dto/find-one-expense.dto';
 import { FindAllExpensesDto } from './dto/find-all-expenses.dto';
+import { FindByDaterangeDto } from './dto/find-by-daterange.dto';
 
 @Controller('expenses')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -38,6 +39,12 @@ export class ExpensesController {
   @Roles(RoleOptions.Admin)
   getSumAmount() {
     return this.expensesService.getSumAmount();
+  }
+
+  @Post('bydate')
+  @Roles(RoleOptions.Admin)
+  getByDateRange(@Body() findByDateRange: FindByDaterangeDto) {
+    return this.expensesService.getByDateRange(findByDateRange);
   }
 
   @Get(':id')

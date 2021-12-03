@@ -1,6 +1,6 @@
 version: '3'
 services:
-  OTB_DB:
+  OTB_CONTAINER:
     container_name: 'OTB_DB'
     image: 'postgres:latest'
     ports:

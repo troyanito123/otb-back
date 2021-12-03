@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getManager, Like, Repository } from 'typeorm';
+import { Between, getManager, Like, Repository } from 'typeorm';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { FindAllExpensesDto } from './dto/find-all-expenses.dto';
+import { FindByDaterangeDto } from './dto/find-by-daterange.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { Expense } from './entities/expense.entity';
 
@@ -53,5 +54,13 @@ export class ExpensesService {
       .createQueryBuilder(Expense, 'expense')
       .select('SUM(expense.amount)', 'total')
       .getRawOne();
+  }
+
+  async getByDateRange(dateRangeDto: FindByDaterangeDto) {
+    return this.expenseRepository.find({
+      where: {
+        date: Between(dateRangeDto.initDate, dateRangeDto.endDate),
+      },
+    });
   }
 }
