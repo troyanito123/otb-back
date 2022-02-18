@@ -20,12 +20,10 @@ export const config = () => ({
   database: {
     type: 'postgres',
 
-    /* ******************** */
-    // descomentar para mandar a produccion
-    ssl: {
-      rejectUnauthorized: false,
-    },
-    /* ******************** */
+    ssl:
+      process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false }
+        : false,
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT, 10) || 5432,
     username: process.env.DB_USERNAME,
@@ -34,10 +32,7 @@ export const config = () => ({
     entities: [join(__dirname, '../**/**/*.entity{.ts,.js}')],
     autoLoadEntities: true,
 
-    /* ******************** */
-    // descomentar para mandar a produccion
-    migrationsRun: true,
-    /* ******************** */
+    migrationsRun: process.env.NODE_ENV === 'production',
     migrations: [join(__dirname, '../database/migrations/**/*{.ts,.js}')],
     migrationsTableName: 'custom_migration_table',
     cli: {
