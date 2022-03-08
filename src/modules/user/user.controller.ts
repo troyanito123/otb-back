@@ -20,6 +20,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RoleOptions, Roles } from '../auth/authorization/role.decorator';
 import { RolesGuard } from '../auth/authorization/role.guard';
 import { FindAllUsersDto } from './dto/find-all-users.dto';
+import { FindBlockDto } from './dto/find-block.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -40,6 +41,11 @@ export class UserController {
   @Get(':id')
   findOne(@Param() params: FindOneUserDto) {
     return this.userService.findOne(params.id);
+  }
+
+  @Get('blocks/:block')
+  findByBlock(@Param() params: FindBlockDto) {
+    return this.userService.findByBlock(params.block);
   }
 
   @Put(':id')

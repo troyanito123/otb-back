@@ -79,6 +79,25 @@ export class UserService {
     return obj;
   }
 
+  async findByBlock(block: string) {
+    const users = await this.userRepository.find({
+      where: { block_number: block.toUpperCase() },
+      select: [
+        'id',
+        'name',
+        'identification_number',
+        'email',
+        'status',
+        'address_number',
+        'block_number',
+      ],
+      relations: ['role'],
+      order: { name: 'ASC' },
+    });
+
+    return users.map((u) => ({ ...u, role: u.role.code }));
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
     this.userRepository.merge(user, updateUserDto);
