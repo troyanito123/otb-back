@@ -92,7 +92,7 @@ export class UserService {
         'block_number',
       ],
       relations: ['role'],
-      order: { name: 'ASC' },
+      order: { address_number: 'ASC' },
     });
 
     return users.map((u) => ({ ...u, role: u.role.code }));
