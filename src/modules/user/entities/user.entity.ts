@@ -13,6 +13,7 @@ import { ContributionsPaid } from 'src/modules/contributions-paid/entities/contr
 import { Certification } from 'src/modules/certifications/entities/certification.entity';
 import { Attendence } from 'src/modules/attendences/entities/attendence.entity';
 import { Fine } from 'src/modules/fines/entities/fine.entity';
+import { ExtraContributionPaid } from 'src/modules/extra-contributions/entities/extra-contribution-paid.entity';
 
 export enum UserStatus {
   ACTIVE = 'ACTIVE',
@@ -70,6 +71,17 @@ export class User {
     },
   )
   contributions_paid: ContributionsPaid[];
+
+  @OneToMany(
+    () => ExtraContributionPaid,
+    (extra_contributions_paid) => extra_contributions_paid.user,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
+  extra_contributions_paid: ExtraContributionPaid[];
 
   @OneToMany(() => Certification, (certificaion) => certificaion.user, {
     cascade: true,

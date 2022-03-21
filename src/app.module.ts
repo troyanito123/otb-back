@@ -18,6 +18,7 @@ import { MeetingsModule } from './modules/meetings/meetings.module';
 import { AttendencesModule } from './modules/attendences/attendences.module';
 import { ExpensesModule } from './modules/expenses/expenses.module';
 import { FinesModule } from './modules/fines/fines.module';
+import { ExtraContributionsModule } from './modules/extra-contributions/extra-contributions.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { FinesModule } from './modules/fines/fines.module';
     AttendencesModule,
     ExpensesModule,
     FinesModule,
+    ExtraContributionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
