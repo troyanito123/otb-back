@@ -37,19 +37,19 @@ export class FinesController {
   }
 
   @Get('total-amount')
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   getSumAmount() {
     return this.finesService.getSumAmount();
   }
 
   @Post('bydate')
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findByDateRange(@Body() findByDateDto: FindByDateFinesDto) {
     return this.finesService.findByDateRange(findByDateDto);
   }
 
   @Get()
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findAll() {
     return this.finesService.findAll();
   }
@@ -60,7 +60,7 @@ export class FinesController {
   }
 
   @Get(':id')
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findOne(@Param() params: FindOneFineDto) {
     return this.finesService.findOne(params.id);
   }

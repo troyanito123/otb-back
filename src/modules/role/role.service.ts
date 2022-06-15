@@ -8,6 +8,7 @@ import { Role } from './entities/role.entity';
 export enum RoleCode {
   ADMIN = 'ADMIN',
   USER = 'USER',
+  SUPERVISOR = 'SUPERVISOR',
 }
 
 @Injectable()

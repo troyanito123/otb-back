@@ -32,30 +32,30 @@ export class CertificationsController {
   }
 
   @Get()
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findAll(@Query() query: FindAllCertificationDto) {
     return this.certificationsService.findAll(query);
   }
 
   @Get('total-amount')
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   getSumAmount() {
     return this.certificationsService.getSumAmount();
   }
 
   @Post('bydate')
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findByDateRange(@Body() findByDateDto: FindByDateCertificationsDto) {
     return this.certificationsService.findByDateRange(findByDateDto);
   }
 
   @Get(':id')
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findOne(@Param() params: FindOneCertificationDto) {
     return this.certificationsService.findOne(params.id);
   }
 
-  @Get('user/:id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findByUser(@Param() params: FindByuserCertificationDto) {
     return this.certificationsService.findByUser(params.id);
   }

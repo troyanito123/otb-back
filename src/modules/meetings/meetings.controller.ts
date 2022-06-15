@@ -28,11 +28,13 @@ export class MeetingsController {
   }
 
   @Get()
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findAll() {
     return this.meetingsService.findAll();
   }
 
   @Get(':id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findOne(@Param() params: FindOneMeetingDto) {
     return this.meetingsService.findOne(params.id);
   }

@@ -24,31 +24,35 @@ import { FindBlockDto } from './dto/find-block.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(RoleOptions.Admin)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @Roles(RoleOptions.Admin)
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
   @Get()
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findAll(@Query() query: FindAllUsersDto) {
     return this.userService.findAll(query);
   }
 
   @Get(':id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findOne(@Param() params: FindOneUserDto) {
     return this.userService.findOne(params.id);
   }
 
   @Get('blocks/:block')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findByBlock(@Param() params: FindBlockDto) {
     return this.userService.findByBlock(params.block);
   }
 
   @Put(':id')
+  @Roles(RoleOptions.Admin)
   async update(
     @Param() params: FindOneUserDto,
     @Body() updateUserDto: UpdateUserDto,
@@ -70,6 +74,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @Roles(RoleOptions.Admin)
   remove(@Param() params: FindOneUserDto) {
     return this.userService.remove(params.id);
   }

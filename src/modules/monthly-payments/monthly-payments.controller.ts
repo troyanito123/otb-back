@@ -32,11 +32,13 @@ export class MonthlyPaymentsController {
   }
 
   @Get()
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findAll(@Query() query: FindAllMonthlyPaymentDto) {
     return this.monthlyPaymentsService.findAll(query);
   }
 
   @Get(':id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findOne(@Param() params: FindOneMonthlyPayment) {
     return this.monthlyPaymentsService.findOne(params.id);
   }

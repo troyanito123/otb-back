@@ -40,29 +40,31 @@ export class MonthlyPaymentsMadeController {
   }
 
   @Post('bydate')
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findByDateRange(@Body() findByDateDto: FindByDateMonthlyPaymentsMadeDto) {
     return this.monthlyPaymentMadesService.findByDateRange(findByDateDto);
   }
 
   @Get()
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findAll() {
     return this.monthlyPaymentMadesService.findAll();
   }
 
   @Get('user/:id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findByUser(@Param() params: FindByUser, @Query() query: { year: string }) {
     return this.monthlyPaymentMadesService.findByUser(params.id, query.year);
   }
 
   @Get('total-amount')
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   getSumAmount() {
     return this.monthlyPaymentMadesService.getSumAmount();
   }
 
   @Get(':id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findOne(@Param() params: FindOneDto) {
     return this.monthlyPaymentMadesService.findOne(params.id);
   }

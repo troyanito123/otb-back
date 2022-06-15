@@ -28,11 +28,13 @@ export class ContributionsController {
   }
 
   @Get()
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findAll() {
     return this.contributionsService.findAll();
   }
 
   @Get(':id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findOne(@Param() params: FindOneContributionDto) {
     return this.contributionsService.findOne(params.id);
   }

@@ -30,24 +30,24 @@ export class AttendencesController {
   }
 
   @Get()
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findAll() {
     return this.attendencesService.findAll();
   }
 
   @Get('user/:id')
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findByUser(@Param() params: FindAttendenceByuser) {
     return this.attendencesService.findByUser(params.id);
   }
 
   @Get('meeting/:id')
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findByMeeting(@Param() params: FindAttendenceBymeeting) {
     return this.attendencesService.findByMeeting(params.id);
   }
 
-  @Get(':id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findOne(@Param() params: FindOneAttendenceDto) {
     return this.attendencesService.findOne(params.id);
   }

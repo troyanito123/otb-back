@@ -42,6 +42,22 @@ const setDefaultData = async (configService: ConfigService) => {
     await roleRepository.save(newRoleUser);
   }
 
+  let roleSupervisor = await roleRepository
+    .createQueryBuilder()
+    .where('code = :code', {
+      code: 'SUPERVISOR',
+    })
+    .getOne();
+
+  if (!roleSupervisor) {
+    const newRoleSupervisor = roleRepository.create({
+      name: 'Supervisor',
+      code: 'SUPERVISOR',
+      description: 'Puede leer todo pero no puedo crear ni actualizar',
+    });
+    roleSupervisor = await roleRepository.save(newRoleSupervisor);
+  }
+
   const user = await userRepository
     .createQueryBuilder()
     .where('email = :email', {

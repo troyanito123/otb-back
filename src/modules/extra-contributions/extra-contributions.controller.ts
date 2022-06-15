@@ -43,16 +43,19 @@ export class ExtraContributionsController {
   }
 
   @Get()
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findAll() {
     return this.extraContributionsService.findAll();
   }
 
   @Get('byuser/:id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findByUser(@Param() params: findByUserDto) {
     return this.extraContributionsService.findByUser(params.id);
   }
 
   @Get(':id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findOne(@Param() params: FindOneExtraContDto) {
     return this.extraContributionsService.findOne(params.id);
   }

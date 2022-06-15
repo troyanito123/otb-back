@@ -39,13 +39,13 @@ export class ContributionsPaidController {
   }
 
   @Post('bydate')
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findByDateRange(@Body() findByDateDto: FindByDateContributionPaidDto) {
     return this.contributionsPaidService.findByDateRange(findByDateDto);
   }
 
   @Get()
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findAll() {
     return this.contributionsPaidService.findAll();
   }
@@ -56,7 +56,7 @@ export class ContributionsPaidController {
   }
 
   @Get('total-amount')
-  @Roles(RoleOptions.Admin)
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   getSumAmount() {
     return this.contributionsPaidService.getSumAmount();
   }
