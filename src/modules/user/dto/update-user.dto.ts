@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsEmail, IsEnum, IsOptional } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  MinLength,
+} from 'class-validator';
 
 import { ExistsOnDatabase } from '../../../validations/exists-on-database';
 import { Role } from '../../role/entities/role.entity';
@@ -13,6 +19,10 @@ export class UpdateUserDto {
 
   @IsOptional()
   identification_number: string;
+
+  @IsOptional()
+  @MinLength(6)
+  password: string;
 
   @IsEnum(UserStatus)
   status: UserStatus;

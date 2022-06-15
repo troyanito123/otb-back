@@ -99,12 +99,15 @@ export class UserService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.findOne(id);
+    const user = await this.userRepository.findOneOrFail(id);
     this.userRepository.merge(user, updateUserDto);
+    if (updateUserDto.password) {
+      user.password = PasswordEncrypter.encrypt(updateUserDto.password);
+    }
     user.role = await this.roleService.findOne(updateUserDto.roleId);
     try {
       const newUser = await this.userRepository.save(user);
-      return { ...newUser, role: newUser.role.code };
+      return { ...newUser, role: newUser.role.code, password: undefined };
     } catch (error) {
       return null;
     }
