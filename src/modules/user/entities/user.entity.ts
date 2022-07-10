@@ -14,6 +14,7 @@ import { Certification } from 'src/modules/certifications/entities/certification
 import { Attendence } from 'src/modules/attendences/entities/attendence.entity';
 import { Fine } from 'src/modules/fines/entities/fine.entity';
 import { ExtraContributionPaid } from 'src/modules/extra-contributions/entities/extra-contribution-paid.entity';
+import { Income } from 'src/modules/incomes/entities/income.entity';
 
 export enum UserStatus {
   ACTIVE = 'ACTIVE',
@@ -103,6 +104,9 @@ export class User {
     onUpdate: 'CASCADE',
   })
   fines: Fine[];
+
+  @OneToMany(() => Income, (income) => income.user, { cascade: true })
+  incomes: Income[];
 
   authenicate(password: string): boolean {
     return PasswordEncrypter.compare(password, this.password);

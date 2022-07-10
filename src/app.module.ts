@@ -19,6 +19,7 @@ import { AttendencesModule } from './modules/attendences/attendences.module';
 import { ExpensesModule } from './modules/expenses/expenses.module';
 import { FinesModule } from './modules/fines/fines.module';
 import { ExtraContributionsModule } from './modules/extra-contributions/extra-contributions.module';
+import { IncomesModule } from './modules/incomes/incomes.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ExtraContributionsModule } from './modules/extra-contributions/extra-co
     ExpensesModule,
     FinesModule,
     ExtraContributionsModule,
+    IncomesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

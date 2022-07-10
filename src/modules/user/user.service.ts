@@ -126,4 +126,8 @@ export class UserService {
       relations: ['role'],
     });
   }
+
+  findUserById(id: number) {
+    return this.userRepository.findOneOrFail(id);
+  }
 }
