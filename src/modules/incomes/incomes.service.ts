@@ -64,6 +64,7 @@ export class IncomesService {
       .addSelect('income.id')
       .addSelect('income.amount')
       .addSelect('income.description')
+      .addSelect('income.collector')
       .addSelect('income.date')
       .addSelect('income.status')
       .addSelect('user.id')

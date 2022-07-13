@@ -8,6 +8,9 @@ export class CreateIncomeDto {
   description: string;
 
   @IsNotEmpty()
+  collector: string;
+
+  @IsNotEmpty()
   @IsDateString()
   date: Date;
 

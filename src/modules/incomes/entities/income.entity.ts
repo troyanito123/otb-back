@@ -12,6 +12,9 @@ export class Income extends CustomEntity {
   description: string;
 
   @Column()
+  collector: string;
+
+  @Column()
   date: Date;
 
   @Column({ enum: GenericStatus, default: GenericStatus.ACTIVE })
