@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
+import { getConnection, getManager, Repository } from 'typeorm';
 import { GenericStatus } from '../genericStatus';
 import { QueryPageable } from '../queryPageable.dto';
 import { UserService } from '../user/user.service';
@@ -120,5 +120,12 @@ export class IncomesService {
       ...newIncome,
       user: { id: newIncome.user.id, name: newIncome.user.name },
     };
+  }
+
+  async getSumAmount() {
+    return getManager()
+      .createQueryBuilder(Income, 'income')
+      .select('SUM(income.amount)', 'total')
+      .getRawOne();
   }
 }

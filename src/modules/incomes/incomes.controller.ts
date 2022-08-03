@@ -39,6 +39,12 @@ export class IncomesController {
     return this.incomesService.findAllPageable(query);
   }
 
+  @Get('total-amount')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
+  getSumAmount() {
+    return this.incomesService.getSumAmount();
+  }
+
   @Get('byuser/:id')
   @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findAllByUser(@Param('id') id: string) {

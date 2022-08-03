@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getManager, Repository } from 'typeorm';
 import { User } from '../user/entities/user.entity';
 import { CreateExtraContributionDto } from './dto/create-extra-contribution.dto';
 import { CreateExtraContributionsPaidDto } from './dto/create-extra-contributions-paid.dto';
 import { UpdateExtraContributionDto } from './dto/update-extra-contribution.dto';
+import { ExtraContributionPaid } from './entities/extra-contribution-paid.entity';
 import { ExtraContributionsPaidRepository } from './extra-contributions-paid.repository';
 import { ExtraContributionsRepository } from './extra-contributions.repository';
 
@@ -97,5 +98,12 @@ export class ExtraContributionsService {
         };
       return { ...a, amount_paid: 0, date_paid: null };
     });
+  }
+
+  async getSumAmount() {
+    return getManager()
+      .createQueryBuilder(ExtraContributionPaid, 'extra')
+      .select('SUM(extra.amount)', 'total')
+      .getRawOne();
   }
 }

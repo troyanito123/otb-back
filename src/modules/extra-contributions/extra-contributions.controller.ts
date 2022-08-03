@@ -42,6 +42,12 @@ export class ExtraContributionsController {
     );
   }
 
+  @Get('total-amount')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
+  getSumAmount() {
+    return this.extraContributionsService.getSumAmount();
+  }
+
   @Get()
   @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findAll() {
