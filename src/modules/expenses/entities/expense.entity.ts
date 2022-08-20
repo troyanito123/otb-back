@@ -17,4 +17,7 @@ export class Expense extends CustomEntity {
 
   @Column()
   from_user: string;
+
+  @Column({ default: 0 })
+  code: number;
 }

@@ -5,15 +5,24 @@ import { CreateExpenseDto } from './dto/create-expense.dto';
 import { FindAllExpensesDto } from './dto/find-all-expenses.dto';
 import { FindByDaterangeDto } from './dto/find-by-daterange.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
+import { ExpenseCode } from './entities/expense-code.entity';
 import { Expense } from './entities/expense.entity';
 
 @Injectable()
 export class ExpensesService {
   constructor(
     @InjectRepository(Expense) private expenseRepository: Repository<Expense>,
+    @InjectRepository(ExpenseCode)
+    private expenseCodeRepository: Repository<ExpenseCode>,
   ) {}
-  create(createExpenseDto: CreateExpenseDto) {
+  async create(createExpenseDto: CreateExpenseDto) {
+    const expenseCodes = await this.expenseCodeRepository.find();
+    const expenseCode = expenseCodes[0];
     const expense = this.expenseRepository.create(createExpenseDto);
+    expense.code = expenseCode.currentCode;
+    this.expenseCodeRepository.update(expenseCode.id, {
+      currentCode: expenseCode.currentCode + 1,
+    });
     return this.expenseRepository.save(expense);
   }
 

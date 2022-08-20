@@ -5,10 +5,20 @@ import { ConfigOptions } from 'src/config/config';
 import { Role } from '../modules/role/entities/role.entity';
 import { User, UserStatus } from '../modules/user/entities/user.entity';
 import { PasswordEncrypter } from '../utils/password-encrypter';
+import { ExpenseCode } from 'src/modules/expenses/entities/expense-code.entity';
+import { Expense } from 'src/modules/expenses/entities/expense.entity';
 
 const setDefaultData = async (configService: ConfigService) => {
   const roleRepository = getRepository<Role>(Role);
   const userRepository = getRepository<User>(User);
+  const expenseCodeRepository = getRepository<ExpenseCode>(ExpenseCode);
+  const expenseRepository = getRepository<Expense>(Expense);
+
+  let expenseCode = await expenseCodeRepository.find();
+  if (!expenseCode.length) {
+    const [data, count] = await expenseRepository.findAndCount();
+    await expenseCodeRepository.save({ currentCode: count + 1 });
+  }
 
   let roleAdmin = await roleRepository
     .createQueryBuilder()
