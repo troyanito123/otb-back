@@ -6,14 +6,13 @@ import { CreateExtraContributionDto } from './dto/create-extra-contribution.dto'
 import { CreateExtraContributionsPaidDto } from './dto/create-extra-contributions-paid.dto';
 import { UpdateExtraContributionDto } from './dto/update-extra-contribution.dto';
 import { ExtraContributionPaid } from './entities/extra-contribution-paid.entity';
-import { ExtraContributionsPaidRepository } from './extra-contributions-paid.repository';
-import { ExtraContributionsRepository } from './extra-contributions.repository';
+import { ExtraContribution } from './entities/extra-contribution.entity';
 
 @Injectable()
 export class ExtraContributionsService {
   constructor(
-    private extraContRepo: ExtraContributionsRepository,
-    private extraContPaidRepo: ExtraContributionsPaidRepository,
+    @InjectRepository(ExtraContribution) private extraContRepo: Repository<ExtraContribution>,
+    @InjectRepository(ExtraContributionPaid) private extraContPaidRepo: Repository<ExtraContributionPaid>,
     @InjectRepository(User) private userRepo: Repository<User>,
   ) {}
 

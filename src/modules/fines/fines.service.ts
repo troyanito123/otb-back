@@ -8,12 +8,11 @@ import { CreateManyFinesDto } from './dto/create-many-fines.dto';
 import { FindByDateFinesDto } from './dto/find-by-date-fines.dto';
 import { UpdateFineDto } from './dto/update-fine.dto';
 import { Fine } from './entities/fine.entity';
-import { FinesRepository } from './fines.repository';
 
 @Injectable()
 export class FinesService {
   constructor(
-    private fineRepository: FinesRepository,
+    @InjectRepository(Fine) private fineRepository: Repository<Fine>,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Meeting) private meetingRepository: Repository<Meeting>,
   ) {}
@@ -80,7 +79,20 @@ export class FinesService {
 
   async findByUser(id: number) {
     const user = await this.userRepository.findOne(id);
-    return this.fineRepository.findByUser(user);
+    const fines = await this.fineRepository.find({
+      where: { user },
+      relations: ['user', 'meeting'],
+    });
+    return fines.map((f) => ({
+      ...f,
+      user: { id: f.user.id, name: f.user.name, email: f.user.email },
+      meeting: {
+        id: f.meeting.id,
+        name: f.meeting.name,
+        fine_amount: f.meeting.fine_amount,
+        date: f.meeting.date,
+      },
+    }));
   }
 
   async findOne(id: number) {

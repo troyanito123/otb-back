@@ -2,19 +2,15 @@ import { Module } from '@nestjs/common';
 import { ExtraContributionsService } from './extra-contributions.service';
 import { ExtraContributionsController } from './extra-contributions.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ExtraContributionsRepository } from './extra-contributions.repository';
 import { User } from '../user/entities/user.entity';
-import { ExtraContributionsPaidRepository } from './extra-contributions-paid.repository';
+import { ExtraContribution } from './entities/extra-contribution.entity';
+import { ExtraContributionPaid } from './entities/extra-contribution-paid.entity';
 
 @Module({
   controllers: [ExtraContributionsController],
   providers: [ExtraContributionsService],
   imports: [
-    TypeOrmModule.forFeature([
-      ExtraContributionsRepository,
-      ExtraContributionsPaidRepository,
-      User,
-    ]),
+    TypeOrmModule.forFeature([ExtraContribution, ExtraContributionPaid, User]),
   ],
 })
 export class ExtraContributionsModule {}

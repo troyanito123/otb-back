@@ -16,7 +16,7 @@ async function bootstrap() {
   generateTypeormConfigFile(configService);
 
   // generate default data
-  setDefaultData(configService);
+  await setDefaultData(configService);
 
   const port = configService.get(ConfigOptions.port);
   await app.listen(port);
