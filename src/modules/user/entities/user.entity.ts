@@ -1,5 +1,6 @@
 import { Role } from '../../role/entities/role.entity';
 import {
+  BeforeInsert,
   Column,
   Entity,
   ManyToOne,
@@ -47,6 +48,9 @@ export class User {
 
   @Column({ default: UserStatus.INACTIVE })
   status: UserStatus;
+
+  @Column({default: '2021-05-01T00:00:00.000Z'})
+  subscription_at: String
 
   @ManyToOne(() => Role, (role) => role.users)
   role: Role;
@@ -110,5 +114,10 @@ export class User {
 
   authenicate(password: string): boolean {
     return PasswordEncrypter.compare(password, this.password);
+  }
+
+  @BeforeInsert()
+  addSubscriptionAt(){
+    this.subscription_at = new Date().toISOString()
   }
 }

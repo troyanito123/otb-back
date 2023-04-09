@@ -46,6 +46,7 @@ export class UserService {
         'status',
         'address_number',
         'block_number',
+        'subscription_at'
       ],
       where: { name: Like('%' + keyword.toUpperCase() + '%') },
       relations: ['role'],
@@ -68,6 +69,7 @@ export class UserService {
         'status',
         'address_number',
         'block_number',
+        'subscription_at',
       ],
       relations: ['role'],
     });
@@ -90,6 +92,7 @@ export class UserService {
         'status',
         'address_number',
         'block_number',
+        'subscription_at'
       ],
       relations: ['role'],
       order: { address_number: 'ASC' },
