@@ -18,6 +18,7 @@ import { RoleOptions, Roles } from '../auth/authorization/role.decorator';
 import { FindOneExtraContDto } from './dto/find-one-extra-cont.dto';
 import { CreateExtraContributionsPaidDto } from './dto/create-extra-contributions-paid.dto';
 import { findByUserDto } from './dto/find-by-user.dto';
+import { FindByDaterangeDto } from './dto/find-by-daterange.dto';
 
 @Controller('extra-contributions')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -76,5 +77,11 @@ export class ExtraContributionsController {
       params.id,
       updateExtraContributionDto,
     );
+  }
+
+  @Post('bydate')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
+  getByDateRange(@Body() findByDateRange: FindByDaterangeDto) {
+    return this.extraContributionsService.getByDateRange(findByDateRange);
   }
 }

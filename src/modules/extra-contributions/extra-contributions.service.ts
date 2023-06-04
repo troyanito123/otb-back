@@ -1,18 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getManager, Repository } from 'typeorm';
+import { Between, getManager, Repository } from 'typeorm';
 import { User } from '../user/entities/user.entity';
 import { CreateExtraContributionDto } from './dto/create-extra-contribution.dto';
 import { CreateExtraContributionsPaidDto } from './dto/create-extra-contributions-paid.dto';
 import { UpdateExtraContributionDto } from './dto/update-extra-contribution.dto';
 import { ExtraContributionPaid } from './entities/extra-contribution-paid.entity';
 import { ExtraContribution } from './entities/extra-contribution.entity';
+import { FindByDaterangeDto } from './dto/find-by-daterange.dto';
 
 @Injectable()
 export class ExtraContributionsService {
   constructor(
-    @InjectRepository(ExtraContribution) private extraContRepo: Repository<ExtraContribution>,
-    @InjectRepository(ExtraContributionPaid) private extraContPaidRepo: Repository<ExtraContributionPaid>,
+    @InjectRepository(ExtraContribution)
+    private extraContRepo: Repository<ExtraContribution>,
+    @InjectRepository(ExtraContributionPaid)
+    private extraContPaidRepo: Repository<ExtraContributionPaid>,
     @InjectRepository(User) private userRepo: Repository<User>,
   ) {}
 
@@ -104,5 +107,21 @@ export class ExtraContributionsService {
       .createQueryBuilder(ExtraContributionPaid, 'extra')
       .select('SUM(extra.amount)', 'total')
       .getRawOne();
+  }
+
+  async getByDateRange(dateRangeDto: FindByDaterangeDto) {
+    const { initDate, endDate } = dateRangeDto;
+    const res = await this.extraContPaidRepo.find({
+      where: { date: Between(initDate, endDate) },
+      relations: ['user', 'extra_contribution'],
+    });
+
+    return res.map((r) => ({
+      id: r.id,
+      amount: r.amount,
+      description: r.extra_contribution.name,
+      date: r.date,
+      fromUser: r.user.name,
+    }));
   }
 }

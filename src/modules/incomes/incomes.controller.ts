@@ -16,6 +16,7 @@ import { RolesGuard } from '../auth/authorization/role.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RoleOptions, Roles } from '../auth/authorization/role.decorator';
 import { QueryPageable } from '../queryPageable.dto';
+import { FindByDaterangeDto } from './dto/find-by-daterange.dto';
 
 @Controller('incomes')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -67,5 +68,11 @@ export class IncomesController {
   @Roles(RoleOptions.Admin)
   remove(@Param('id') id: string) {
     return this.incomesService.remove(+id);
+  }
+
+  @Post('bydate')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
+  getByDateRange(@Body() findByDateRange: FindByDaterangeDto) {
+    return this.incomesService.getByDateRange(findByDateRange);
   }
 }

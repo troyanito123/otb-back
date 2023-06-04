@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, getManager, Repository } from 'typeorm';
+import { Between, getConnection, getManager, Repository } from 'typeorm';
 import { GenericStatus } from '../genericStatus';
 import { QueryPageable } from '../queryPageable.dto';
 import { UserService } from '../user/user.service';
 import { CreateIncomeDto } from './dto/create-income.dto';
 import { UpdateIncomeDto } from './dto/update-income.dto';
 import { Income } from './entities/income.entity';
+import { FindByDaterangeDto } from './dto/find-by-daterange.dto';
 
 @Injectable()
 export class IncomesService {
@@ -127,5 +128,22 @@ export class IncomesService {
       .createQueryBuilder(Income, 'income')
       .select('SUM(income.amount)', 'total')
       .getRawOne();
+  }
+
+  async getByDateRange(dateRangeDto: FindByDaterangeDto) {
+    const { initDate, endDate } = dateRangeDto;
+    const res = await this.incomeRepository.find({
+      where: { date: Between(initDate, endDate) },
+      relations: ['user'],
+    });
+
+    return res.map((r) => ({
+      id: r.id,
+      amount: r.amount,
+      description: r.description,
+      date: r.date,
+      toUser: r.collector,
+      formUser: r.user.name
+    }));
   }
 }
