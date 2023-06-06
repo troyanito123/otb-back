@@ -143,7 +143,7 @@ export class IncomesService {
       description: r.description,
       date: r.date,
       toUser: r.collector,
-      formUser: r.user.name
+      fromUser: r.user.name
     }));
   }
 }
