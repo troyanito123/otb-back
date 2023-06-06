@@ -113,6 +113,7 @@ export class ExtraContributionsService {
     const { initDate, endDate } = dateRangeDto;
     const res = await this.extraContPaidRepo.find({
       where: { date: Between(initDate, endDate) },
+      order: {date: 'ASC'},
       relations: ['user', 'extra_contribution'],
     });
 

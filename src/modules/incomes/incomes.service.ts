@@ -134,6 +134,7 @@ export class IncomesService {
     const { initDate, endDate } = dateRangeDto;
     const res = await this.incomeRepository.find({
       where: { date: Between(initDate, endDate) },
+      order: {date: 'ASC'},
       relations: ['user'],
     });
 
