@@ -152,6 +152,7 @@ export class ContributionsPaidService {
     const contributionPaids = await this.contributionsPaidRepository.find({
       where: { date: Between(initDate, endDate) },
       relations: ['user', 'contribution'],
+      order: {date: 'ASC'}
     });
 
     return contributionPaids.map((r) => ({

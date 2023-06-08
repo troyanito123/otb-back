@@ -70,6 +70,7 @@ export class ExpensesService {
       where: {
         date: Between(dateRangeDto.initDate, dateRangeDto.endDate),
       },
+      order: {date: 'ASC'}
     });
   }
 }
