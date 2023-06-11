@@ -12,5 +12,6 @@ import { User } from '../user/entities/user.entity';
   ],
   controllers: [MonthlyPaymentsMadeController],
   providers: [MonthlyPaymentsMadeService],
+  exports: [MonthlyPaymentsMadeService]
 })
 export class MonthlyPaymentMadesModule {}

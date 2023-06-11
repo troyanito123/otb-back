@@ -125,4 +125,9 @@ export class ExtraContributionsService {
       fromUser: r.user.name,
     }));
   }
+
+  async getSumByRange(dateRangeDto: FindByDaterangeDto) {
+    const extraContributionsPaid = await this.getByDateRange(dateRangeDto);
+    return extraContributionsPaid.reduce((acum, curr) => acum + curr.amount, 0);
+  }
 }

@@ -160,4 +160,9 @@ export class ContributionsPaidService {
       user: { id: r.user.id, name: r.user.name, email: r.user.email },
     }));
   }
+
+  async getSumByRange(dateRangeDto: FindByDateContributionPaidDto) {
+    const contributionsPaid = await this.findByDateRange(dateRangeDto);
+    return contributionsPaid.reduce((acum, curr) => acum + curr.amount, 0);
+  }
 }

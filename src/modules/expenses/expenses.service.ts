@@ -70,7 +70,12 @@ export class ExpensesService {
       where: {
         date: Between(dateRangeDto.initDate, dateRangeDto.endDate),
       },
-      order: {date: 'ASC'}
+      order: { date: 'ASC' },
     });
+  }
+
+  async getSumByRange(dateRangeDto: FindByDaterangeDto) {
+    const expenses = await this.getByDateRange(dateRangeDto);
+    return expenses.reduce((acum, curr) => acum + curr.amount, 0);
   }
 }

@@ -161,4 +161,9 @@ export class MonthlyPaymentsMadeService {
       user: { id: r.user.id, name: r.user.name, email: r.user.email },
     }));
   }
+
+  async getSumByRange(dateRangeDto: FindByDateMonthlyPaymentsMadeDto) {
+    const monthlyPayments = await this.findByDateRange(dateRangeDto);
+    return monthlyPayments.reduce((acum, curr) => acum + curr.amount, 0);
+  }
 }

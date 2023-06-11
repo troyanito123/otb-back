@@ -10,5 +10,6 @@ import { User } from '../user/entities/user.entity';
   imports: [TypeOrmModule.forFeature([ContributionsPaid, User, Contribution])],
   controllers: [ContributionsPaidController],
   providers: [ContributionsPaidService],
+  exports: [ContributionsPaidService],
 })
 export class ContributionsPaidModule {}

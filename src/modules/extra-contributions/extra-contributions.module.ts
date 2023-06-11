@@ -9,6 +9,7 @@ import { ExtraContributionPaid } from './entities/extra-contribution-paid.entity
 @Module({
   controllers: [ExtraContributionsController],
   providers: [ExtraContributionsService],
+  exports: [ExtraContributionsService],
   imports: [
     TypeOrmModule.forFeature([ExtraContribution, ExtraContributionPaid, User]),
   ],

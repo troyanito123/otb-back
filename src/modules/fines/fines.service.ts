@@ -185,4 +185,9 @@ export class FinesService {
       },
     }));
   }
+
+  async getSumByRange(dateRangeDto: FindByDateFinesDto) {
+    const fines = await this.findByDateRange(dateRangeDto);
+    return fines.reduce((acum, curr) => acum + curr.fine_paid, 0);
+  }
 }

@@ -134,7 +134,7 @@ export class IncomesService {
     const { initDate, endDate } = dateRangeDto;
     const res = await this.incomeRepository.find({
       where: { date: Between(initDate, endDate) },
-      order: {date: 'ASC'},
+      order: { date: 'ASC' },
       relations: ['user'],
     });
 
@@ -144,7 +144,12 @@ export class IncomesService {
       description: r.description,
       date: r.date,
       toUser: r.collector,
-      fromUser: r.user.name
+      fromUser: r.user.name,
     }));
+  }
+
+  async getSumByRange(dateRangeDto: FindByDaterangeDto) {
+    const incomes = await this.getByDateRange(dateRangeDto);
+    return incomes.reduce((acum, curr) => acum + curr.amount, 0);
   }
 }

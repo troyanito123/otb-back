@@ -20,6 +20,7 @@ import { ExpensesModule } from './modules/expenses/expenses.module';
 import { FinesModule } from './modules/fines/fines.module';
 import { ExtraContributionsModule } from './modules/extra-contributions/extra-contributions.module';
 import { IncomesModule } from './modules/incomes/incomes.module';
+import { ReportModule } from './modules/report/report.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { IncomesModule } from './modules/incomes/incomes.module';
     FinesModule,
     ExtraContributionsModule,
     IncomesModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [AppService],

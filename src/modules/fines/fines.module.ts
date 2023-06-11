@@ -10,5 +10,6 @@ import { Fine } from './entities/fine.entity';
   imports: [TypeOrmModule.forFeature([Fine, User, Meeting])],
   controllers: [FinesController],
   providers: [FinesService],
+  exports: [FinesService]
 })
 export class FinesModule {}

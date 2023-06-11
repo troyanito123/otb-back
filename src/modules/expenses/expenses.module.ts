@@ -9,5 +9,6 @@ import { ExpenseCode } from './entities/expense-code.entity';
   imports: [TypeOrmModule.forFeature([Expense, ExpenseCode])],
   controllers: [ExpensesController],
   providers: [ExpensesService],
+  exports: [ExpensesService]
 })
 export class ExpensesModule {}

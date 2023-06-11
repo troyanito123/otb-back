@@ -133,4 +133,9 @@ export class CertificationsService {
       user: { id: r.user.id, name: r.user.name, email: r.user.email },
     }));
   }
+
+  async getSumByRange(dateRangeDto: FindByDateCertificationsDto) {
+    const certifications = await this.findByDateRange(dateRangeDto);
+    return certifications.reduce((acum, curr) => acum + curr.amount, 0);
+  }
 }
