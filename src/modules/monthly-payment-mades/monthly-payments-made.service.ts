@@ -174,7 +174,7 @@ export class MonthlyPaymentsMadeService {
     const data = await Promise.all(
       users.map((user) =>
         this.monthlyPaymentRepository.manager.query(`
-          SELECT m.id, m.month, m.amount, mp.date AS fecha_pago, u.id as userId, u.name as vecino
+          SELECT m.id, m.year, m.month, m.amount, mp.date AS date, u.id as userid, u.name as username
           FROM monthly_payments m
           LEFT JOIN (
               SELECT mpm."monthlyPaymetId", mpm."userId", mpm.date
