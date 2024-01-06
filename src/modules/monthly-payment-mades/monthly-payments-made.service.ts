@@ -166,4 +166,34 @@ export class MonthlyPaymentsMadeService {
     const monthlyPayments = await this.findByDateRange(dateRangeDto);
     return monthlyPayments.reduce((acum, curr) => acum + curr.amount, 0);
   }
+
+  async getUserMonty(block: string) {
+    const users = await this.userRepository.find({
+      where: { block_number: block },
+    });
+    const data = await Promise.all(
+      users.map((user) =>
+        this.monthlyPaymentRepository.manager.query(`
+          SELECT m.id, m.month, m.amount, mp.date AS fecha_pago, u.id as userId, u.name as vecino
+          FROM monthly_payments m
+          LEFT JOIN (
+              SELECT mpm."monthlyPaymetId", mpm."userId", mpm.date
+              FROM monthly_payments_made mpm
+              WHERE mpm."userId" = ${user.id}
+          ) mp ON m.id = mp."monthlyPaymetId"
+          left join users u on u.id = mp."userId"
+          ORDER BY m.id;
+        `),
+      ),
+    );
+    return data.map((d, i) => ({
+      user: {
+        id: users[i].id,
+        name: users[i].name,
+        block_number: users[i].block_number,
+        address_number: users[i].address_number,
+      },
+      data: d,
+    }));
+  }
 }

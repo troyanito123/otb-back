@@ -21,4 +21,9 @@ export class ReportController {
   getSumExpensesByDate(@Body() dateRange: DateRangeDto) {
     return this.reportService.getSumExpensesByDate(dateRange);
   }
+  @Post('user-monthlypayments')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
+  getUserMonthlyPayments(@Body() body: any) {
+    return this.reportService.getUserMonthlyPayments(body);
+  }
 }

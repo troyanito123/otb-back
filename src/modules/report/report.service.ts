@@ -58,4 +58,8 @@ export class ReportService {
     const expenseSum = await this.expenseService.getSumByRange(dateRange);
     return { total: expenseSum };
   }
+
+  async getUserMonthlyPayments(body: any) {
+    return this.monthlyPaymentService.getUserMonty(body.block);
+  }
 }
