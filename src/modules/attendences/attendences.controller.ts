@@ -35,6 +35,12 @@ export class AttendencesController {
     return this.attendencesService.findAll();
   }
 
+  @Get('meetings-user/:id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
+  findAllMeetingsByUser(@Param() params: FindAttendenceByuser) {
+    return this.attendencesService.findAllMeetingsByUser(params.id);
+  }
+
   @Get('user/:id')
   @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findByUser(@Param() params: FindAttendenceByuser) {

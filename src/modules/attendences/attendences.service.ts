@@ -101,4 +101,20 @@ export class AttendencesService {
     await this.attendenceRespository.delete(id);
     return attendence;
   }
+
+  async findAllMeetingsByUser(id: number) {
+    const meetings = await this.meetingRepository.find();
+    const attendences = await this.attendenceRespository.find({
+      where: { user: { id } },
+      relations: ['meeting'],
+    });
+
+    const mapAt = attendences.reduce(
+      (a: Map<number, Attendence>, c) =>
+        a.has(c.meeting.id) ? a : a.set(c.meeting.id, c),
+      new Map<number, Attendence>(),
+    );
+
+    return meetings.map((m) => ({ ...m, isPresent: mapAt.has(m.id) }));
+  }
 }
