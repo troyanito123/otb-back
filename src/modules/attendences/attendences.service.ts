@@ -103,7 +103,9 @@ export class AttendencesService {
   }
 
   async findAllMeetingsByUser(id: number) {
-    const meetings = await this.meetingRepository.find();
+    const meetings = await this.meetingRepository.find({
+      order: { date: 'ASC' },
+    });
     const attendences = await this.attendenceRespository.find({
       where: { user: { id } },
       relations: ['meeting'],
