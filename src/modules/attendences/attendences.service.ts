@@ -117,6 +117,10 @@ export class AttendencesService {
       new Map<number, Attendence>(),
     );
 
-    return meetings.map((m) => ({ ...m, isPresent: mapAt.has(m.id) }));
+    return meetings.map((m) => ({
+      ...m,
+      isPresent: mapAt.has(m.id),
+      fine_amount: mapAt.has(m.id) ? 0 : m.fine_amount,
+    }));
   }
 }
