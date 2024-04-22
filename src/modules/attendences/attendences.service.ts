@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { Meeting } from '../meetings/entities/meeting.entity';
 import { User } from '../user/entities/user.entity';
 import { CreateAttendenceDto } from './dto/create-attendence.dto';
@@ -103,7 +103,9 @@ export class AttendencesService {
   }
 
   async findAllMeetingsByUser(id: number) {
+    const user = await this.userRepository.findOne({ id });
     const meetings = await this.meetingRepository.find({
+      where: { date: MoreThanOrEqual(user.subscription_at) },
       order: { date: 'ASC' },
     });
     const attendences = await this.attendenceRespository.find({
