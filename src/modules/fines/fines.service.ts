@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, getManager, Repository } from 'typeorm';
+import { Between, getManager, MoreThanOrEqual, Repository } from 'typeorm';
 import { Meeting } from '../meetings/entities/meeting.entity';
 import { User } from '../user/entities/user.entity';
 import { CreateFineDto } from './dto/create-fine.dto';
@@ -8,6 +8,7 @@ import { CreateManyFinesDto } from './dto/create-many-fines.dto';
 import { FindByDateFinesDto } from './dto/find-by-date-fines.dto';
 import { UpdateFineDto } from './dto/update-fine.dto';
 import { Fine } from './entities/fine.entity';
+import { Attendence } from '../attendences/entities/attendence.entity';
 
 @Injectable()
 export class FinesService {
@@ -15,6 +16,8 @@ export class FinesService {
     @InjectRepository(Fine) private fineRepository: Repository<Fine>,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Meeting) private meetingRepository: Repository<Meeting>,
+    @InjectRepository(Attendence)
+    private attendanceRepository: Repository<Attendence>,
   ) {}
 
   async create(createFineDto: CreateFineDto) {
@@ -189,5 +192,35 @@ export class FinesService {
   async getSumByRange(dateRangeDto: FindByDateFinesDto) {
     const fines = await this.findByDateRange(dateRangeDto);
     return fines.reduce((acum, curr) => acum + curr.fine_paid, 0);
+  }
+
+  async getCompleteFinesByUser(userId: number) {
+    const user = await this.userRepository.findOne(userId);
+    const meetings = await this.meetingRepository.find({
+      where: { date: MoreThanOrEqual(user.subscription_at) },
+      order: { date: 'ASC' },
+    });
+    const attendences = await this.attendanceRepository.find({
+      where: { user: { id: userId } },
+      relations: ['meeting'],
+    });
+    const fines = await this.fineRepository.find({
+      where: { user: { id: userId } },
+      relations: ['meeting'],
+    });
+    return meetings.map((meeting) => {
+      const attendence = attendences.find(
+        (attendence) => attendence.meeting.id === meeting.id,
+      );
+      const fine = fines.find((fine) => fine.meeting.id === meeting.id);
+      return {
+        meetingId: meeting.id,
+        meetingName: meeting.name,
+        meetingDate: meeting.date,
+        attendence: attendence ? 'SI' : 'NO',
+        fine: attendence ? 0 : meeting.fine_amount,
+        finePaid: fine ? fine.fine_paid : 0,
+      };
+    });
   }
 }

@@ -42,6 +42,12 @@ export class FinesController {
     return this.finesService.getSumAmount();
   }
 
+  @Get('meetings-user/:id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
+  getCompleteFinesByUser(@Param() params: FindByuserFineDto) {
+    return this.finesService.getCompleteFinesByUser(params.id);
+  }
+
   @Post('bydate')
   @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   findByDateRange(@Body() findByDateDto: FindByDateFinesDto) {
