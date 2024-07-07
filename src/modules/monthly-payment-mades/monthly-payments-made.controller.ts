@@ -56,6 +56,16 @@ export class MonthlyPaymentsMadeController {
   findByUser(@Param() params: FindByUser, @Query() query: { year: string }) {
     return this.monthlyPaymentMadesService.findByUser(params.id, query.year);
   }
+  @Get('user/report/:id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
+  reportByUser(@Param() params: FindByUser) {
+    return this.monthlyPaymentMadesService.reportByUser(params.id);
+  }
+  @Get('block/report/:code')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
+  reportByBlok(@Param() params: any) {
+    return this.monthlyPaymentMadesService.reportByBlok(params.code);
+  }
 
   @Get('total-amount')
   @Roles(RoleOptions.Admin, RoleOptions.Supervisor)

@@ -83,6 +83,78 @@ export class MonthlyPaymentsMadeService {
     return res;
   }
 
+  async reportByUser(userId: number) {
+    const months = [
+      'ENERO',
+      'FEBRERO',
+      'MARZO',
+      'ABRIL',
+      'MAYO',
+      'JUNIO',
+      'JULIO',
+      'AGOSTO',
+      'SEPTIEMBRE',
+      'OCTUBRE',
+      'NOVIEMBRE',
+      'DICIEMBRE',
+    ];
+    const monthlyPayments = await this.monthlyPaymentRepository.find();
+
+    const paidMonthlyPayments = await this.monthlyPaymentMadeRepository.find({
+      where: { user: { id: userId } },
+      relations: ['monthly_paymet'],
+    });
+
+    const user = await this.userRepository.findOne(userId);
+
+    const paymentsByYear = monthlyPayments
+      .map((mp) => ({
+        year: mp.year,
+        month: mp.month,
+        amount: mp.amount,
+        isMonthlyPaymentPaid: paidMonthlyPayments.some(
+          (mpm) => mpm.monthly_paymet.id === mp.id,
+        ),
+        paymentDate:
+          paidMonthlyPayments.find((mpm) => mpm.monthly_paymet.id === mp.id)
+            ?.date ?? null,
+      }))
+      .filter(
+        (d) =>
+          new Date(`${d.year}/${months.indexOf(d.month) + 1}/01`).getTime() >=
+          new Date(user.subscription_at.toString()).getTime(),
+      )
+      .reduce(
+        (a: Map<string, any[]>, c) =>
+          a.has(c.year)
+            ? a.set(c.year, [...a.get(c.year), c])
+            : a.set(c.year, [c]),
+        new Map<string, any[]>(),
+      );
+
+    const paymentsByUser: any = {};
+    paymentsByYear.forEach((p, k) => {
+      paymentsByUser[k] = [...p].sort(
+        (a, b) => months.indexOf(a.month) - months.indexOf(b.month),
+      );
+    });
+    return {
+      userId: user.id,
+      userName: user.name,
+      subscriptionAt: user.subscription_at,
+      block: user.block_number,
+      addressNumber: user.address_number,
+      paymentsByUser,
+    };
+  }
+
+  async reportByBlok(block: string) {
+    const users = await this.userRepository.find({
+      where: { block_number: block },
+    });
+    return Promise.all(users.map((u) => this.reportByUser(u.id)));
+  }
+
   async update(
     id: number,
     updateMonthlyPaymentMadeDto: UpdateMonthlyPaymentMadeDto,
