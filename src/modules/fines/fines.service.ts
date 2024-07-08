@@ -208,7 +208,7 @@ export class FinesService {
       where: { user: { id: userId } },
       relations: ['meeting'],
     });
-    return meetings.map((meeting) => {
+    const userFines = meetings.map((meeting) => {
       const attendence = attendences.find(
         (attendence) => attendence.meeting.id === meeting.id,
       );
@@ -220,7 +220,23 @@ export class FinesService {
         attendence: attendence ? 'SI' : 'NO',
         fine: attendence ? 0 : meeting.fine_amount,
         finePaid: fine ? fine.fine_paid : 0,
+        fienPaidDate: fine?.date ?? null,
       };
     });
+    return {
+      userId: user.id,
+      userName: user.name,
+      subscriptionAt: user.subscription_at,
+      block: user.block_number,
+      addressNumber: user.address_number,
+      fines: userFines,
+    };
+  }
+
+  async reportFinesByBlock(block: string) {
+    const users = await this.userRepository.find({
+      where: { block_number: block },
+    });
+    return Promise.all(users.map((u) => this.getCompleteFinesByUser(u.id)));
   }
 }

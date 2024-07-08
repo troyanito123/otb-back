@@ -47,6 +47,11 @@ export class FinesController {
   getCompleteFinesByUser(@Param() params: FindByuserFineDto) {
     return this.finesService.getCompleteFinesByUser(params.id);
   }
+  @Get('meetings-block/:code')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
+  reportFinesByBlock(@Param() params: any) {
+    return this.finesService.reportFinesByBlock(params.code);
+  }
 
   @Post('bydate')
   @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
