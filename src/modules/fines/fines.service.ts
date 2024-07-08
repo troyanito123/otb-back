@@ -209,9 +209,7 @@ export class FinesService {
       relations: ['meeting'],
     });
     const userFines = meetings.map((meeting) => {
-      const attendence = attendences.find(
-        (attendence) => attendence.meeting.id === meeting.id,
-      );
+      const attendence = attendences.find((attendence) => attendence.meeting.id === meeting.id);
       const fine = fines.find((fine) => fine.meeting.id === meeting.id);
       return {
         meetingId: meeting.id,
