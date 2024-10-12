@@ -14,7 +14,7 @@ const setDefaultData = async (configService: ConfigService) => {
   const expenseCodeRepository = getRepository<ExpenseCode>(ExpenseCode);
   const expenseRepository = getRepository<Expense>(Expense);
 
-  let expenseCode = await expenseCodeRepository.find();
+  const expenseCode = await expenseCodeRepository.find();
   if (!expenseCode.length) {
     const [data, count] = await expenseRepository.findAndCount();
     await expenseCodeRepository.save({ currentCode: count + 1 });
@@ -79,9 +79,7 @@ const setDefaultData = async (configService: ConfigService) => {
     const newuser = userRepository.create({
       name: configService.get(ConfigOptions.defaultUserName),
       email: configService.get(ConfigOptions.defaultUserEmail),
-      password: PasswordEncrypter.encrypt(
-        configService.get(ConfigOptions.defaultUserPassword),
-      ),
+      password: PasswordEncrypter.encrypt(configService.get(ConfigOptions.defaultUserPassword)),
       block_number: '00',
       address_number: '00',
       role: roleAdmin,
