@@ -3,14 +3,29 @@ services:
   OTB_CONTAINER:
     container_name: 'OTB_DB'
     image: 'postgres:latest'
-    ports:
-      - '5433:5432'
     volumes:
       - ./data/postgres:/data/postgres
     env_file:
       - docker.env
-    networks:
-      - postgres
+  OTB_BACK:
+    depends_on:
+      - OTB_CONTAINER
+    environment:
+      - PORT=3000
+      - JWT_SECRET=miclavesupersecreta
+      - JWT_EXP=6h
+      - DB_PORT=5432
+      - DB_HOST=OTB_DB
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=123123
+      - DB_DATABASE=OTBSJ
+      - DEFAULT_USER_NAME=Admin Test
+      - DEFAULT_USER_EMAIL=admin@test.com
+      - DEFAULT_USER_PASSWORD=jhoseph123
+    container_name: OTB_API
+    image: otb-js-api:2.0.0
+    ports:
+      - "3000:3000"
 networks:
   postgres:
     driver: bridge
