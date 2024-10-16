@@ -19,9 +19,9 @@ export const config = () => ({
   defaultUserPassword: process.env.DEFAULT_USER_PASSWORD,
   database: {
     type: 'postgres',
-    // ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : true,
-    ssl: { rejectUnauthorized: false },
-    unix_sock: '/cloudsql/san-jose-c3fd4:us-central1:otb-db/.s.PSQL.5432',
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : true,
+    host: process.env.DB_HOST,
+    port: 5432,
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,

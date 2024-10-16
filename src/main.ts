@@ -17,8 +17,8 @@ async function bootstrap() {
 
   // generate default data
   await setDefaultData(configService);
-  Logger.warn(process.env.NODE_ENV);
-  Logger.warn(configService.get(ConfigOptions.database));
+  console.log('NODE_ENV', process.env.NODE_ENV);
+  console.log('DATABAS CONFIG', configService.get(ConfigOptions.database));
 
   const port = configService.get(ConfigOptions.port);
   await app.listen(port);
