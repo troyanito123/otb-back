@@ -19,8 +19,7 @@ export const config = () => ({
   defaultUserPassword: process.env.DEFAULT_USER_PASSWORD,
   database: {
     type: 'postgres',
-    // ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-    ssl: true,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : true,
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT, 10) || 5432,
     username: process.env.DB_USERNAME,
@@ -33,7 +32,8 @@ export const config = () => ({
     migrations: [join(__dirname, '../database/migrations/**/*{.ts,.js}')],
     migrationsTableName: 'custom_migration_table',
     cli: {
-      migrationsDir: 'src/database/migrations',
+      // migrationsDir: 'src/database/migrations',
+      migrationsDir: [join(__dirname, '../database/migrations')],
     },
 
     // Activar SOLO MANUALMENTE en DESARROLLO SI ES NECESARIO (DESACTIVAR EN PRODUCCION).
