@@ -17,4 +17,4 @@ steps:
         "us-central1-docker.pkg.dev/san-jose-c3fd4/otb-api/api",
       ]
 options:
-  logging: REGIONAL_USER_OWNED_BUCKET
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
