@@ -22,8 +22,9 @@ services:
       - DEFAULT_USER_NAME=Admin Test
       - DEFAULT_USER_EMAIL=admin@test.com
       - DEFAULT_USER_PASSWORD=jhoseph123
+      - NODE_ENV=production
     container_name: OTB_API
-    image: otb-js-api:2.0.0
+    image: otb-test-api:latest
     ports:
       - "3000:3000"
 networks:
