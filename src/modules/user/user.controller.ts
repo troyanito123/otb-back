@@ -38,6 +38,11 @@ export class UserController {
   findAll(@Query() query: FindAllUsersDto) {
     return this.userService.findAll(query);
   }
+  @Get('detail/:id')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
+  getUserWithDetail(@Param() params: FindOneUserDto) {
+    return this.userService.getUserWithDetail(params.id);
+  }
 
   @Get(':id')
   @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
@@ -53,18 +58,13 @@ export class UserController {
 
   @Put(':id')
   @Roles(RoleOptions.Admin)
-  async update(
-    @Param() params: FindOneUserDto,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
+  async update(@Param() params: FindOneUserDto, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.userService.update(params.id, updateUserDto);
     if (!user) {
       throw new HttpException(
         {
           statusCode: HttpStatus.BAD_REQUEST,
-          message: [
-            `The field name: ${updateUserDto.email} already exists. Choose another!`,
-          ],
+          message: [`The field name: ${updateUserDto.email} already exists. Choose another!`],
           error: 'Bad request',
         },
         HttpStatus.BAD_REQUEST,

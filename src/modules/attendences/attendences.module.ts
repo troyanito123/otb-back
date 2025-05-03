@@ -10,5 +10,6 @@ import { Meeting } from '../meetings/entities/meeting.entity';
   imports: [TypeOrmModule.forFeature([Attendence, User, Meeting])],
   controllers: [AttendencesController],
   providers: [AttendencesService],
+  exports: [AttendencesService],
 })
 export class AttendencesModule {}

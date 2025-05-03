@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PasswordEncrypter } from 'src/utils/password-encrypter';
-import { Like, Repository } from 'typeorm';
+import { Like, Not, Repository } from 'typeorm';
 import { RoleCode, RoleService } from '../role/role.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FindAllUsersDto } from './dto/find-all-users.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserStatus } from './entities/user.entity';
+import { AttendencesService } from '../attendences/attendences.service';
+import { FinesService } from '../fines/fines.service';
+import { MonthlyPaymentsMadeService } from '../monthly-payment-mades/monthly-payments-made.service';
+import { ExtraContributionsService } from '../extra-contributions/extra-contributions.service';
+import { ContributionsPaidService } from '../contributions-paid/contributions-paid.service';
 
 @Injectable()
 export class UserService {
@@ -14,6 +19,11 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private roleService: RoleService,
+    private attendenceService: AttendencesService,
+    private fineService: FinesService,
+    private monthlyPaymentsMadeService: MonthlyPaymentsMadeService,
+    private extraContributionService: ExtraContributionsService,
+    private contributionPaidService: ContributionsPaidService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -46,9 +56,9 @@ export class UserService {
         'status',
         'address_number',
         'block_number',
-        'subscription_at'
+        'subscription_at',
       ],
-      where: { name: Like('%' + keyword.toUpperCase() + '%') },
+      where: { name: Like('%' + keyword.toUpperCase() + '%'), status: Not(UserStatus.DELETE) },
       relations: ['role'],
       order: { name: sort },
       take,
@@ -60,7 +70,7 @@ export class UserService {
 
   async findOne(id: number) {
     const user = await this.userRepository.findOne({
-      where: { id },
+      where: { id, status: Not(UserStatus.DELETE) },
       select: [
         'id',
         'name',
@@ -83,7 +93,7 @@ export class UserService {
 
   async findByBlock(block: string) {
     const users = await this.userRepository.find({
-      where: { block_number: block.toUpperCase() },
+      where: { block_number: block.toUpperCase(), status: Not(UserStatus.DELETE) },
       select: [
         'id',
         'name',
@@ -92,7 +102,7 @@ export class UserService {
         'status',
         'address_number',
         'block_number',
-        'subscription_at'
+        'subscription_at',
       ],
       relations: ['role'],
       order: { address_number: 'ASC' },
@@ -132,5 +142,45 @@ export class UserService {
 
   findUserById(id: number) {
     return this.userRepository.findOneOrFail(id);
+  }
+
+  async getUserWithDetail(id: number) {
+    const data = await this.userRepository.findOne(id, {
+      relations: ['certifications', 'incomes'],
+    });
+    const certifications = data.certifications.map((d) => ({
+      id: d.id,
+      amount: d.amount,
+      date: d.date,
+      description: d.description,
+      type: d.type,
+    }));
+    const incomes = data.incomes.map((d) => ({
+      id: d.id,
+      amount: d.amount,
+      date: d.date,
+      description: d.description,
+    }));
+
+    const attendences = await this.attendenceService.findAllMeetingsByUser(id);
+    const finnes = await this.fineService.getCompleteFinesByUser(id);
+    const monthlyPayments = await this.monthlyPaymentsMadeService.reportByUser(id);
+    const extraContributions = await this.extraContributionService.findByUser(id);
+    const contributions = await this.contributionPaidService.getAllForUser(id);
+
+    return {
+      id: data.id,
+      name: data.name,
+      blockNumber: data.block_number,
+      addressNumber: data.address_number,
+      subscriptionAt: data.subscription_at,
+      incomes,
+      contributions,
+      extraContributions,
+      certifications,
+      attendences,
+      finnes,
+      monthlyPayments,
+    };
   }
 }

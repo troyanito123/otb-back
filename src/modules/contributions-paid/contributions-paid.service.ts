@@ -30,12 +30,8 @@ export class ContributionsPaidService {
   ) {}
 
   async create(createContributionsPaidDto: CreateContributionsPaidDto) {
-    const contributionPaid = this.contributionsPaidRepository.create(
-      createContributionsPaidDto,
-    );
-    contributionPaid.user = await this.userRepository.findOne(
-      createContributionsPaidDto.userId,
-    );
+    const contributionPaid = this.contributionsPaidRepository.create(createContributionsPaidDto);
+    contributionPaid.user = await this.userRepository.findOne(createContributionsPaidDto.userId);
 
     contributionPaid.contribution = await this.contributionRepository.findOne(
       createContributionsPaidDto.contributionId,
@@ -61,9 +57,7 @@ export class ContributionsPaidService {
         contribution,
         date: createManyDto.date,
       });
-      const partial = await this.contributionsPaidRepository.save(
-        contributionPaid,
-      );
+      const partial = await this.contributionsPaidRepository.save(contributionPaid);
       res.push(partial);
     }
     return res.map((r) => ({
@@ -107,18 +101,11 @@ export class ContributionsPaidService {
     return res;
   }
 
-  async update(
-    id: number,
-    updateContributionsPaidDto: UpdateContributionsPaidDto,
-  ) {
-    const contributionPaid = await this.contributionsPaidRepository.findOne(
-      id,
-      { relations: ['user', 'contribution'] },
-    );
-    this.contributionsPaidRepository.merge(
-      contributionPaid,
-      updateContributionsPaidDto,
-    );
+  async update(id: number, updateContributionsPaidDto: UpdateContributionsPaidDto) {
+    const contributionPaid = await this.contributionsPaidRepository.findOne(id, {
+      relations: ['user', 'contribution'],
+    });
+    this.contributionsPaidRepository.merge(contributionPaid, updateContributionsPaidDto);
     const res = await this.contributionsPaidRepository.save(contributionPaid);
     const { user } = res;
     const { password, ...rest } = user;
@@ -127,10 +114,9 @@ export class ContributionsPaidService {
   }
 
   async remove(id: number) {
-    const contributionPaid = await this.contributionsPaidRepository.findOne(
-      id,
-      { relations: ['user', 'contribution'] },
-    );
+    const contributionPaid = await this.contributionsPaidRepository.findOne(id, {
+      relations: ['user', 'contribution'],
+    });
 
     await this.contributionsPaidRepository.delete(id);
 
@@ -152,7 +138,7 @@ export class ContributionsPaidService {
     const contributionPaids = await this.contributionsPaidRepository.find({
       where: { date: Between(initDate, endDate) },
       relations: ['user', 'contribution'],
-      order: {date: 'ASC'}
+      order: { date: 'ASC' },
     });
 
     return contributionPaids.map((r) => ({
@@ -164,5 +150,27 @@ export class ContributionsPaidService {
   async getSumByRange(dateRangeDto: FindByDateContributionPaidDto) {
     const contributionsPaid = await this.findByDateRange(dateRangeDto);
     return contributionsPaid.reduce((acum, curr) => acum + curr.amount, 0);
+  }
+
+  public async getAllForUser(userId: number) {
+    const all = await this.contributionRepository.find();
+    const byUser = await this.contributionsPaidRepository.find({
+      where: { user: { id: userId } },
+      relations: ['contribution'],
+    });
+    const byUserContr = byUser.map((u) => ({
+      ...u.contribution,
+      date: u.date,
+    }));
+    return all.map((a) => {
+      const aux = byUserContr.find((u) => u.id === a.id);
+      if (aux)
+        return {
+          ...a,
+          amount_paid: aux.amount,
+          date_paid: aux.date,
+        };
+      return { ...a, amount_paid: 0, date_paid: null };
+    });
   }
 }
