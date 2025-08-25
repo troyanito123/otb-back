@@ -216,8 +216,8 @@ export class FinesService {
         meetingName: meeting.name,
         meetingDate: meeting.date,
         attendence: attendence ? 'SI' : 'NO',
-        fine: meeting.fine_amount ?? 0,
-        finePaid: fine.fine_paid ?? 0,
+        fine: meeting?.fine_amount ?? 0,
+        finePaid: fine?.fine_paid ?? 0,
         fienPaidDate: fine?.date ?? null,
       };
     });
