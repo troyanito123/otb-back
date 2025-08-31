@@ -89,9 +89,8 @@ export class ReportService {
       order: { date: 'ASC' },
     });
 
-    // 2. Obtener usuarios activos
+    // 2. Obtener TODOS los usuarios (sin filtro de status para incluir todos)
     const users = await this.userRepository.find({
-      where: { status: 'ACTIVE' },
       order: { name: 'ASC' },
     });
 
@@ -193,9 +192,8 @@ export class ReportService {
       order: { month: 'ASC' },
     });
 
-    // 2. Obtener usuarios activos
+    // 2. Obtener TODOS los usuarios (sin filtro de status para incluir todos)
     const users = await this.userRepository.find({
-      where: { status: 'ACTIVE' },
       order: { name: 'ASC' },
     });
 
