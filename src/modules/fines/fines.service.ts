@@ -76,6 +76,8 @@ export class FinesService {
         name: f.meeting.name,
         fine_amount: f.meeting.fine_amount,
         date: f.meeting.date,
+        type: f.meeting.type,
+        year: f.meeting.year,
       },
     }));
   }
@@ -94,6 +96,8 @@ export class FinesService {
         name: f.meeting.name,
         fine_amount: f.meeting.fine_amount,
         date: f.meeting.date,
+        type: f.meeting.type,
+        year: f.meeting.year,
       },
     }));
   }
@@ -111,6 +115,8 @@ export class FinesService {
         name: fine.meeting.name,
         fine_amount: fine.meeting.fine_amount,
         date: fine.meeting.date,
+        type: fine.meeting.type,
+        year: fine.meeting.year,
       },
     };
   }
@@ -135,6 +141,8 @@ export class FinesService {
         name: newFine.meeting.name,
         fine_amount: newFine.meeting.fine_amount,
         date: newFine.meeting.date,
+        type: newFine.meeting.type,
+        year: newFine.meeting.year,
       },
     };
   }
@@ -158,6 +166,8 @@ export class FinesService {
         name: fine.meeting.name,
         fine_amount: fine.meeting.fine_amount,
         date: fine.meeting.date,
+        type: fine.meeting.type,
+        year: fine.meeting.year,
       },
     };
   }
@@ -185,6 +195,8 @@ export class FinesService {
         name: f.meeting.name,
         fine_amount: f.meeting.fine_amount,
         date: f.meeting.date,
+        type: f.meeting.type,
+        year: f.meeting.year,
       },
     }));
   }
@@ -215,6 +227,8 @@ export class FinesService {
         meetingId: meeting.id,
         meetingName: meeting.name,
         meetingDate: meeting.date,
+        meetingType: meeting.type,
+        meetingYear: meeting.year,
         attendence: attendence ? 'SI' : 'NO',
         fine: attendence ? 0 : meeting.fine_amount,
         finePaid: fine ? fine.fine_paid : 0,
