@@ -10,10 +10,13 @@ import { CertificationsService } from '../certifications/certifications.service'
 import { DateRangeDto } from './dto/date-range.dto';
 import { ContributionsPaidService } from '../contributions-paid/contributions-paid.service';
 import { UsersMeetingsMatrixDto } from './dto/users-meetings-matrix.dto';
+import { UsersMonthlyPaymentsMatrixDto } from './dto/users-monthly-payments-matrix.dto';
 import { Meeting } from '../meetings/entities/meeting.entity';
 import { User } from '../user/entities/user.entity';
 import { Attendence } from '../attendences/entities/attendence.entity';
 import { Fine } from '../fines/entities/fine.entity';
+import { MonthlyPayment } from '../monthly-payments/entities/monthly-payment.entity';
+import { MonthlyPaymentMade } from '../monthly-payment-mades/entities/monthly-payment-made.entity';
 
 @Injectable()
 export class ReportService {
@@ -33,6 +36,10 @@ export class ReportService {
     private attendenceRepository: Repository<Attendence>,
     @InjectRepository(Fine)
     private fineRepository: Repository<Fine>,
+    @InjectRepository(MonthlyPayment)
+    private monthlyPaymentRepository: Repository<MonthlyPayment>,
+    @InjectRepository(MonthlyPaymentMade)
+    private monthlyPaymentMadeRepository: Repository<MonthlyPaymentMade>,
   ) {}
 
   async getSumIncomesByDate(dateRange: DateRangeDto) {
@@ -172,6 +179,95 @@ export class ReportService {
         name: m.name,
         date: m.date.toISOString().split('T')[0], // formato YYYY-MM-DD
         fineAmount: m.fine_amount || 0,
+      })),
+      users: usersData,
+      headers,
+      rows,
+    };
+  }
+
+  async getUsersMonthlyPaymentsMatrix(year: number): Promise<UsersMonthlyPaymentsMatrixDto> {
+    // 1. Obtener pagos mensuales del año ordenados por mes
+    const monthlyPayments = await this.monthlyPaymentRepository.find({
+      where: { year: year.toString() },
+      order: { month: 'ASC' },
+    });
+
+    // 2. Obtener usuarios activos
+    const users = await this.userRepository.find({
+      where: { status: 'ACTIVE' },
+      order: { name: 'ASC' },
+    });
+
+    // 3. Obtener pagos realizados del año
+    const paymentsMade = await this.monthlyPaymentMadeRepository.find({
+      where: { monthly_paymet: { year: year.toString() } },
+      relations: ['user', 'monthly_paymet'],
+    });
+
+    // 4. Crear matriz de datos
+    const usersData = users.map((user) => {
+      let totalPaid = 0;
+      let totalOwed = 0;
+
+      const userPayments = monthlyPayments.map((payment) => {
+        // Verificar si pagó esta mensualidad
+        const made = paymentsMade.find(
+          (pm) => pm.user.id === user.id && pm.monthly_paymet.id === payment.id,
+        );
+
+        if (made) {
+          totalPaid += made.amount;
+          return { monthlyPaymentId: payment.id, value: made.amount.toString() };
+        } else {
+          totalOwed += payment.amount;
+          return { monthlyPaymentId: payment.id, value: '0' };
+        }
+      });
+
+      const paymentPercentage =
+        monthlyPayments.length > 0
+          ? Math.round((totalPaid / (totalPaid + totalOwed)) * 100 * 10) / 10
+          : 0;
+
+      return {
+        id: user.id,
+        name: user.name,
+        blockNumber: user.block_number,
+        payments: userPayments,
+        totalPaid,
+        totalOwed,
+        paymentPercentage,
+      };
+    });
+
+    // 5. Crear headers dinámicos
+    const headers = [
+      'Usuario',
+      'Bloque',
+      ...monthlyPayments.map((mp) => `${mp.month} ${mp.year} ($${mp.amount})`),
+      'Total Pagado',
+      'Total Adeudado',
+      '%',
+    ];
+
+    // 6. Crear rows para formato tabla
+    const rows = usersData.map((user) => [
+      user.name,
+      user.blockNumber,
+      ...user.payments.map((payment) => payment.value),
+      `$${user.totalPaid}`,
+      `$${user.totalOwed}`,
+      `${user.paymentPercentage}%`,
+    ]);
+
+    return {
+      year,
+      monthlyPayments: monthlyPayments.map((mp) => ({
+        id: mp.id,
+        month: mp.month,
+        year: mp.year,
+        amount: mp.amount,
       })),
       users: usersData,
       headers,

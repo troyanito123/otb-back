@@ -13,10 +13,12 @@ import { Meeting } from '../meetings/entities/meeting.entity';
 import { User } from '../user/entities/user.entity';
 import { Attendence } from '../attendences/entities/attendence.entity';
 import { Fine } from '../fines/entities/fine.entity';
+import { MonthlyPayment } from '../monthly-payments/entities/monthly-payment.entity';
+import { MonthlyPaymentMade } from '../monthly-payment-mades/entities/monthly-payment-made.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Meeting, User, Attendence, Fine]),
+    TypeOrmModule.forFeature([Meeting, User, Attendence, Fine, MonthlyPayment, MonthlyPaymentMade]),
     MonthlyPaymentMadesModule,
     IncomesModule,
     FinesModule,
