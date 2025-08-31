@@ -21,6 +21,11 @@ export const seedWithFakeData = async (options?: {
 }): Promise<void> => {
   const { userCount = 10, meetingCount = 6, generatePayments = true } = options || {};
 
+  // 🚨 VALIDACIÓN DE SEGURIDAD: No ejecutar en producción
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('🚫 ERROR: No se puede ejecutar el seed con datos falsos en producción!');
+  }
+
   console.log('🎭 Iniciando seeding con datos falsos...');
 
   const roleRepository = getRepository<Role>(Role);

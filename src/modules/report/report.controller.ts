@@ -1,6 +1,7 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Query } from '@nestjs/common';
 import { ReportService } from './report.service';
 import { DateRangeDto } from './dto/date-range.dto';
+import { UsersMeetingsMatrixDto } from './dto/users-meetings-matrix.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/authorization/role.guard';
 import { RoleOptions, Roles } from '../auth/authorization/role.decorator';
@@ -25,5 +26,11 @@ export class ReportController {
   @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
   getUserMonthlyPayments(@Body() body: any) {
     return this.reportService.getUserMonthlyPayments(body);
+  }
+
+  @Get('users-meetings-matrix')
+  @Roles(RoleOptions.Admin, RoleOptions.Supervisor)
+  async getUsersMeetingsMatrix(@Query('year') year: number): Promise<UsersMeetingsMatrixDto> {
+    return this.reportService.getUsersMeetingsMatrix(year);
   }
 }

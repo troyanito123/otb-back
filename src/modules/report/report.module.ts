@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReportService } from './report.service';
 import { ReportController } from './report.controller';
 import { IncomesModule } from '../incomes/incomes.module';
@@ -8,9 +9,14 @@ import { ExpensesModule } from '../expenses/expenses.module';
 import { CertificationsModule } from '../certifications/certifications.module';
 import { MonthlyPaymentMadesModule } from '../monthly-payment-mades/monthly-payments-made.module';
 import { ContributionsPaidModule } from '../contributions-paid/contributions-paid.module';
+import { Meeting } from '../meetings/entities/meeting.entity';
+import { User } from '../user/entities/user.entity';
+import { Attendence } from '../attendences/entities/attendence.entity';
+import { Fine } from '../fines/entities/fine.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Meeting, User, Attendence, Fine]),
     MonthlyPaymentMadesModule,
     IncomesModule,
     FinesModule,

@@ -7,6 +7,19 @@ dotenv.config();
 
 async function runFakeSeed() {
   try {
+    // 🚨 VALIDACIÓN DE SEGURIDAD: No ejecutar en producción
+    if (process.env.NODE_ENV === 'production') {
+      console.error('🚫 ERROR: No se puede ejecutar el seed con datos falsos en producción!');
+      console.error('📋 Este script solo debe ejecutarse en entornos de desarrollo o testing.');
+      process.exit(1);
+    }
+
+    // Validación adicional por host de producción
+    if (process.env.DB_HOST && !['localhost', '127.0.0.1'].includes(process.env.DB_HOST)) {
+      console.warn('⚠️  ADVERTENCIA: Detectado host no local:', process.env.DB_HOST);
+      console.warn('🔍 Asegúrate de que NO estás conectado a una base de datos de producción.');
+    }
+
     console.log('🔗 Conectando a la base de datos para seed con datos falsos...');
     console.log(`📍 Host: ${process.env.DB_HOST}`);
     console.log(`🔌 Puerto: ${process.env.DB_PORT}`);
