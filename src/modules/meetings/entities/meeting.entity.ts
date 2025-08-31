@@ -20,6 +20,12 @@ export class Meeting extends CustomEntity {
   @Column({ type: 'text', nullable: true })
   conclutions: string;
 
+  @Column({ default: null, nullable: true })
+  year: string;
+
+  @Column({ default: null, nullable: true })
+  type: string;
+
   @OneToMany(() => Attendence, (attendence) => attendence.user, {
     cascade: true,
     onDelete: 'CASCADE',

@@ -7,9 +7,7 @@ import { Meeting } from './entities/meeting.entity';
 
 @Injectable()
 export class MeetingsService {
-  constructor(
-    @InjectRepository(Meeting) private meetingRepository: Repository<Meeting>,
-  ) {}
+  constructor(@InjectRepository(Meeting) private meetingRepository: Repository<Meeting>) {}
 
   create(createMeetingDto: CreateMeetingDto) {
     const meeting = this.meetingRepository.create(createMeetingDto);

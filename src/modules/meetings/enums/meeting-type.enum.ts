@@ -1,0 +1,7 @@
+export enum MeetingType {
+  GENERAL = 'GENERAL',
+  EXTRAORDINARY = 'EXTRAORDINARY',
+  MEETING = 'MEETING',
+  PARADE = 'PARADE',
+  PROTEST = 'PROTEST',
+}
