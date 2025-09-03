@@ -243,7 +243,7 @@ export class ReportService {
           totalPaid += made.amount;
           return { monthlyPaymentId: payment.id, value: made.amount.toString() };
         } else {
-          const registerDate = moment(user.subscription_at.toString());
+          const registerDate = moment(user.subscription_at.toString()).endOf('month');
           const monthlyDate = moment()
             .set({
               year: year,
