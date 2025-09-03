@@ -17,7 +17,6 @@ export class UserMonthlyPaymentMatrixDto {
   payments: UserMonthlyPaymentDto[];
   totalPaid: number;
   totalOwed: number;
-  paymentPercentage: number;
 }
 
 export class UsersMonthlyPaymentsMatrixDto {

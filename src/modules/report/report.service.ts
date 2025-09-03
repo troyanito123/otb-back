@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, In } from 'typeorm';
+import { Repository, Between, In, Not } from 'typeorm';
 import { ExpensesService } from '../expenses/expenses.service';
 import { MonthlyPaymentsMadeService } from '../monthly-payment-mades/monthly-payments-made.service';
 import { IncomesService } from '../incomes/incomes.service';
@@ -12,7 +12,7 @@ import { ContributionsPaidService } from '../contributions-paid/contributions-pa
 import { UsersMeetingsMatrixDto } from './dto/users-meetings-matrix.dto';
 import { UsersMonthlyPaymentsMatrixDto } from './dto/users-monthly-payments-matrix.dto';
 import { Meeting } from '../meetings/entities/meeting.entity';
-import { User } from '../user/entities/user.entity';
+import { User, UserStatus } from '../user/entities/user.entity';
 import { Attendence } from '../attendences/entities/attendence.entity';
 import { Fine } from '../fines/entities/fine.entity';
 import { MonthlyPayment } from '../monthly-payments/entities/monthly-payment.entity';
@@ -91,6 +91,7 @@ export class ReportService {
 
     // 2. Obtener TODOS los usuarios (sin filtro de status para incluir todos)
     const users = await this.userRepository.find({
+      where: { status: Not(UserStatus.DELETE) },
       order: { name: 'ASC' },
     });
 
@@ -129,8 +130,14 @@ export class ReportService {
             totalFinesPaid += fine.fine_paid;
             return { meetingId: meeting.id, value: fine.fine_paid.toString() };
           } else {
-            totalFinesOwed += meetingFineAmount;
-            return { meetingId: meeting.id, value: '0' };
+            const registerDate = new Date(user.subscription_at.toString()).getTime();
+            const meetingDate = meeting.date.getTime();
+            if (meetingDate > registerDate) {
+              totalFinesOwed += meetingFineAmount;
+              return { meetingId: meeting.id, value: '0' };
+            } else {
+              return { meetingId: meeting.id, value: 'N/A' };
+            }
           }
         }
       });
@@ -140,7 +147,7 @@ export class ReportService {
       return {
         id: user.id,
         name: user.name,
-        blockNumber: user.block_number,
+        blockNumber: `${user.block_number}/${user.address_number}`,
         attendances: userAttendances,
         totalAttended,
         totalFinesPaid,
@@ -151,12 +158,11 @@ export class ReportService {
     // 6. Crear headers dinámicos
     const headers = [
       'Usuario',
-      'Bloque',
+      'Lote',
       ...meetings.map((m) => {
-        const fineAmount = m.fine_amount || 0;
-        return `${m.name} (Multa: $${fineAmount})`;
+        const fineAmount = m.fine_amount ?? 0;
+        return `${m.name} (Multa: ${fineAmount}Bs.)`;
       }),
-      'Asistencias',
       'Multas Pagadas',
       'Multas Pendientes',
     ];
@@ -166,9 +172,8 @@ export class ReportService {
       user.name,
       user.blockNumber,
       ...user.attendances.map((att) => att.value),
-      `${user.totalAttended}/${meetings.length}`,
-      `$${user.totalFinesPaid}`,
-      `$${user.totalFinesOwed}`,
+      `${user.totalFinesPaid}`,
+      `${user.totalFinesOwed}`,
     ]);
 
     return {
@@ -186,14 +191,33 @@ export class ReportService {
   }
 
   async getUsersMonthlyPaymentsMatrix(year: number): Promise<UsersMonthlyPaymentsMatrixDto> {
-    // 1. Obtener pagos mensuales del año ordenados por mes
+    // 1. Obtener pagos mensuales del año (sin orden)
     const monthlyPayments = await this.monthlyPaymentRepository.find({
       where: { year: year.toString() },
-      order: { month: 'ASC' },
+    });
+
+    // Ordenar por número de mes
+    const monthOrder = [
+      'ENERO',
+      'FEBRERO',
+      'MARZO',
+      'ABRIL',
+      'MAYO',
+      'JUNIO',
+      'JULIO',
+      'AGOSTO',
+      'SEPTIEMBRE',
+      'OCTUBRE',
+      'NOVIEMBRE',
+      'DICIEMBRE',
+    ];
+    monthlyPayments.sort((a, b) => {
+      return monthOrder.indexOf(a.month.toUpperCase()) - monthOrder.indexOf(b.month.toUpperCase());
     });
 
     // 2. Obtener TODOS los usuarios (sin filtro de status para incluir todos)
     const users = await this.userRepository.find({
+      where: { status: Not(UserStatus.DELETE) },
       order: { name: 'ASC' },
     });
 
@@ -218,35 +242,35 @@ export class ReportService {
           totalPaid += made.amount;
           return { monthlyPaymentId: payment.id, value: made.amount.toString() };
         } else {
-          totalOwed += payment.amount;
-          return { monthlyPaymentId: payment.id, value: '0' };
+          const registerMonth = new Date(user.subscription_at.toString()).getMonth();
+          const registerYear = new Date(user.subscription_at.toString()).getFullYear();
+          const paymentMonth = monthOrder.indexOf(payment.month.toUpperCase());
+          if (paymentMonth > registerMonth && year >= registerYear) {
+            totalOwed += payment.amount;
+            return { monthlyPaymentId: payment.id, value: '0' };
+          } else {
+            return { monthlyPaymentId: payment.id, value: 'N/A' };
+          }
         }
       });
-
-      const paymentPercentage =
-        monthlyPayments.length > 0
-          ? Math.round((totalPaid / (totalPaid + totalOwed)) * 100 * 10) / 10
-          : 0;
 
       return {
         id: user.id,
         name: user.name,
-        blockNumber: user.block_number,
+        blockNumber: `${user.block_number}/${user.address_number}`,
         payments: userPayments,
         totalPaid,
         totalOwed,
-        paymentPercentage,
       };
     });
 
     // 5. Crear headers dinámicos
     const headers = [
       'Usuario',
-      'Bloque',
-      ...monthlyPayments.map((mp) => `${mp.month} ${mp.year} ($${mp.amount})`),
+      'Lote',
+      ...monthlyPayments.map((mp) => `${mp.month.slice(0, 3)} ${mp.year} ${mp.amount}Bs.`),
       'Total Pagado',
       'Total Adeudado',
-      '%',
     ];
 
     // 6. Crear rows para formato tabla
@@ -254,9 +278,8 @@ export class ReportService {
       user.name,
       user.blockNumber,
       ...user.payments.map((payment) => payment.value),
-      `$${user.totalPaid}`,
-      `$${user.totalOwed}`,
-      `${user.paymentPercentage}%`,
+      `${user.totalPaid}`,
+      `${user.totalOwed}`,
     ]);
 
     return {
