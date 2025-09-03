@@ -17,6 +17,7 @@ import { Attendence } from '../attendences/entities/attendence.entity';
 import { Fine } from '../fines/entities/fine.entity';
 import { MonthlyPayment } from '../monthly-payments/entities/monthly-payment.entity';
 import { MonthlyPaymentMade } from '../monthly-payment-mades/entities/monthly-payment-made.entity';
+import * as moment from 'moment';
 
 @Injectable()
 export class ReportService {
@@ -242,10 +243,15 @@ export class ReportService {
           totalPaid += made.amount;
           return { monthlyPaymentId: payment.id, value: made.amount.toString() };
         } else {
-          const registerMonth = new Date(user.subscription_at.toString()).getMonth();
-          const registerYear = new Date(user.subscription_at.toString()).getFullYear();
-          const paymentMonth = monthOrder.indexOf(payment.month.toUpperCase());
-          if (paymentMonth > registerMonth && year >= registerYear) {
+          const registerDate = moment(user.subscription_at.toString());
+          const monthlyDate = moment()
+            .set({
+              year: year,
+              month: monthOrder.indexOf(payment.month.toUpperCase()),
+              date: 1,
+            })
+            .endOf('month');
+          if (monthlyDate.isAfter(registerDate)) {
             totalOwed += payment.amount;
             return { monthlyPaymentId: payment.id, value: '0' };
           } else {
